@@ -1,0 +1,41 @@
+<!-- src/main/resources/templates/landing.html -->
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>Landing Page</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="center-wrapper">
+        <img src="/static/assets/logo-usedlion.png"
+             srcset="/static/assets/logo-usedlion@2x.png 2x"
+             alt="UsedLion Logo"
+             class="lion-logo">
+
+        <h2 class="mb-4">중고로사자 챗</h2>
+
+        <div class="w-100" style="max-width: 400px;">
+            <input type="text" id="nickname" class="form-control mb-3" placeholder="채팅 닉네임 입력">
+            <button class="btn btn-primary w-100" onclick="enterChat()">Enter Chat</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function enterChat() {
+      const nickname = document.getElementById('nickname').value.trim();
+      if (!nickname) {
+        alert('Please enter a nickname.');
+        return;
+      }
+      localStorage.setItem('nickname', nickname);
+      window.location.href = "/chat";
+    }
+</script>
+</body>
+</html>

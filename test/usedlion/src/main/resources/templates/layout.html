@@ -1,0 +1,18 @@
+<!-- src/main/resources/templates/layout.html -->
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="UTF-8">
+    <title layout:title-pattern="$CONTENT_TITLE - UsedLion">UsedLion</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+<main layout:fragment="content">
+    <p>🌱 Default layout content</p>
+</main>
+</body>
+</html>
