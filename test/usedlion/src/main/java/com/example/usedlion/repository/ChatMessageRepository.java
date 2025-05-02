@@ -1,6 +1,6 @@
 package com.example.usedlion.repository;
 
-import com.example.usedlion.model.ChatMessage;
+import com.example.usedlion.entity.ChatMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

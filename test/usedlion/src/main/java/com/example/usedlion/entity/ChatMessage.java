@@ -1,4 +1,4 @@
-package com.example.usedlion.model;
+package com.example.usedlion.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

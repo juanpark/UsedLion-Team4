@@ -1,6 +1,6 @@
 package com.example.usedlion.controller;
 
-import com.example.usedlion.model.ChatMessage;
+import com.example.usedlion.entity.ChatMessage;
 import com.example.usedlion.repository.ChatMessageRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
