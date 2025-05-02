@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>댓글 삭제 확인</title>
+</head>
+<body>
+<h1>댓글 삭제 확인</h1>
+<p>아래 댓글을 정말 삭제하시겠습니까?</p>
+
+<!-- 실제 댓글 내용을 보여 줌 -->
+<blockquote th:text="${reply.content}">댓글 내용</blockquote>
+
+<form th:action="@{/replies/delete/{id}(id=${reply.replyId})}"
+      method="post">
+  <button type="submit">삭제</button>
+  <button type="button"
+          th:onclick="'location.href=\'/replies/post/' + ${reply.postId} + '\';'">
+    취소
+  </button>
+</form>
+</body>
+</html>
