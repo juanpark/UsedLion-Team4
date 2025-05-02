@@ -1,6 +1,4 @@
-package com.example.chatserver.model;
-
-import java.lang.annotation.Inherited;
+package com.example.usedlion.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

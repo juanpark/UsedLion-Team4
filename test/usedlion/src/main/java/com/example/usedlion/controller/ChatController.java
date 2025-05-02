@@ -1,7 +1,7 @@
-package com.example.chatserver.controller;
+package com.example.usedlion.controller;
 
-import com.example.chatserver.model.ChatMessage;
-import com.example.chatserver.repository.ChatMessageRepository;
+import com.example.usedlion.model.ChatMessage;
+import com.example.usedlion.repository.ChatMessageRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
