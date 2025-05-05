@@ -17,10 +17,10 @@ body {
 
 /* Responsive image */
 .lion-logo {
-  max-width: 300px;
+  max-width: 500px;
   width: 100%;
-  height: auto;
-  margin-bottom: 2rem;
+  object-position: center top;
+  margin-bottom: 0 auto 1rem auto;
 }
 
 /* Input + button box */
@@ -35,13 +35,52 @@ body {
 /* Mobile tweaks */
 @media (max-width: 600px) {
   .lion-logo {
-    max-width: 200px;
+    max-width: 300px;
   }
 
   .input-group {
     width: 90%;
   }
 }
+
+/* input text box */
+.lion-input {
+  background-color: rgb(255, 201, 154);      /* background color */
+  color: rgb(144,144,144);                 /* text color */
+  font-size: 30px;                /* text size */
+  font-weight: bold;
+  font-family: 'Nanum Gothic', sans-serif;
+  padding: 0.75rem 1rem;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.lion-input:focus {
+  border-color: #ff9900;
+  outline: none;
+  box-shadow: 0 0 5px rgba(255, 153, 0, 0.3);
+}
+
+.lion-button {
+  background-color: rgb(124, 124, 124);      /* background color */
+  color: rgb(255,255,255);                 /* text color */
+  font-size: 30px;                /* text size */
+  font-weight: bold;
+  font-family: 'Nanum Gothic', sans-serif;
+  padding: 0.75rem 1rem;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  text-align: center;
+}
+
 
 /* You can keep expanding... */
 
