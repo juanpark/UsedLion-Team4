@@ -1,0 +1,60 @@
+<!-- src/main/resources/templates/landing.html -->
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>Landing Page</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="center-wrapper">
+        <img src="/static/assets/img/logo-usedlion.png"
+             srcset="/static/assets/img/logo-usedlion@2x.png 2x"
+             alt="UsedLion Logo"
+             class="lion-logo">
+
+        <div class="w-100" style="max-width: 400px;">
+            <form action="/login" method="post">
+                <input type="text"     name="username" placeholder="이메일"    class="lion-input"><br><br>
+                <input type="password" name="password" placeholder="비밀번호" class="lion-input"><br><br>
+                <button type="submit"  class="lion-button">로그인</button>
+            </form>
+
+            <p class="text-center" style="font-weight: bold;">
+                중고로사자 계정이 없으신가요? <a href="/signup" class="text-decoration-none">회원 가입</a>
+            </p>
+        </div>
+        <div class="mt-4 text-center">
+            <a href="/oauth2/authorization/google" class="google-btn">
+                <img src="/static/assets/img/web_light_rd_SI@1x.png" 
+                    srcset="/static/assets/img/web_light_rd_SI@2x.png 2x, 
+                    /static/assets/img/web_light_rd_SI@3x.png 3x"
+                    sizes="(max-width: 576px) 80vw, 280px"
+                    alt="Sign in with Google"
+                    style="max-width: 100%; height: auto;" />
+              </a>
+        </div>
+        
+        <div class="w-100" style="max-width: 400px;">
+            <input type="text" id="nickname" class="form-control mb-3" placeholder="채팅 닉네임 입력">
+            <button class="btn btn-primary w-100" onclick="enterChat()">Enter Chat</button>
+        </div>
+    </div>
+    <script>
+        function enterChat() {
+          const nickname = document.getElementById('nickname').value.trim();
+          if (!nickname) {
+            alert('Please enter a nickname.');
+            return;
+          }
+          localStorage.setItem('nickname', nickname);
+          window.location.href = "/chat";
+        }
+    </script>
+</div>
+</body>
+</html>
