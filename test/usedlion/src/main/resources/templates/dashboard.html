@@ -1,17 +1,31 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Dashboard</title>
-</head>
-<body>
-    <h1>Welcome, <span th:text="${userName}">User</span>!</h1>
-    <p>This is your dashboard.</p>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}">
 
-    <ul>
-        <li><a href="/chat">Chat Room</a></li>
-        <li><a href="/profile">My Profile</a></li>
-        <li><a href="/sell">Sell Item</a></li>
-        <li><a href="/logout">Log Out</a></li>
-    </ul>
+<head>
+    <title>중고로사자 광장</title>
+</head>
+
+<body>
+<main layout:fragment="content">
+    <div class="container my-4">
+        <h2 class="mb-4">📦 중고로사자 광장</h2>
+
+        <div id="post-list" class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col" th:each="post : ${posts}">
+                <div class="card h-100">
+                    <img th:src="${post.imageUrl}" class="card-img-top" alt="상품 이미지">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${post.title}">상품명</h5>
+                        <p class="card-text">
+                            <span th:text="'카테고리: ' + ${post.category}"></span><br>
+                            <span th:text="'상태: ' + ${post.condition}"></span><br>
+                            <span th:text="'등록일: ' + ${post.date}"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 </body>
 </html>

@@ -25,7 +25,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/oauth2/authorization/google")
+                        // 로그인 페이지는 기본 로그으로 (구글 로그인이 기본 설정이 아님!
+                        .loginPage("/")
                         .defaultSuccessUrl("/dashboard", true)
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                 )
