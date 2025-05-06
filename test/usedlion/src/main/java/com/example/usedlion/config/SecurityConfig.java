@@ -76,7 +76,7 @@ public class SecurityConfig {
 
                 // ③ Google OAuth2 로그인
                 .oauth2Login(oauth -> oauth
-                        .loginPage("/oauth2/authorization/google")  // OAuth 시작 경로
+                        // .loginPage("/") -> 구글 에러를 보려면 이 부분을 빼야 함.  
                         .userInfoEndpoint(userInfo ->
                                 userInfo.userService(oauth2UserService)
                         )
