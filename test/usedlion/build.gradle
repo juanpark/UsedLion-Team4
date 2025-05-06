@@ -20,13 +20,11 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client' // G1
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // template용 엔진
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  // 🆕 For JPA (database repository)
-
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0'
-
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
 	runtimeOnly 'com.mysql:mysql-connector-j'  // 🆕 For MySQL database driver

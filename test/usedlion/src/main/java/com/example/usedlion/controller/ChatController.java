@@ -6,7 +6,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;  
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;  
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
@@ -21,63 +21,54 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Controller
 public class ChatController {
 
+    private final ChatMessageRepository repo;
     private final SimpMessagingTemplate messagingTemplate;
-    private final ChatMessageRepository chatMessageRepository;
-    private final AtomicInteger connectedUsers = new AtomicInteger(0);
-    
+    private final AtomicInteger userCount = new AtomicInteger();
+    private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    public ChatController(SimpMessagingTemplate messagingTemplate, ChatMessageRepository chatMessageRepository) {
+
+    public ChatController(ChatMessageRepository repo,
+                          SimpMessagingTemplate messagingTemplate) {
+        this.repo = repo;
         this.messagingTemplate = messagingTemplate;
-        this.chatMessageRepository = chatMessageRepository;
     }
 
     @MessageMapping("/chat.sendMessage")    // 클라이언트 발송 /app/chat.sendMessage
     @SendTo("/topic/public")                // 서버 방송 /topic/public
-    public ChatMessage sendMessage(ChatMessage message) {
-        // 타임스탬프 추가
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        message.setTimestamp(timestamp);
-
-        // MySQL 저장하기
-        chatMessageRepository.save(message);
-
-        return message; // just echoing the message back for now
+    public ChatMessage sendMessage(ChatMessage msg) {
+        // timestamp 세팅
+        msg.setTimestamp(LocalDateTime.now().format(fmt));
+        // DB 저장
+        repo.save(msg);
+        return msg;
     }
 
-    @MessageMapping("/chat.history")
-    public void sendHistory() {
-        List<ChatMessage> history = chatMessageRepository.findAll();
-        for (ChatMessage pastMessage : history) {
-            messagingTemplate.convertAndSend("/topic/public", pastMessage);
-        }
-    }
-
-    // 챗 히스토리 로딩하기
+    // 과거 대화 내역 REST 조회 (/chat/history)
     @GetMapping("/chat/history")
     @ResponseBody
     public List<ChatMessage> getChatHistory() {
-        return chatMessageRepository.findAll(); // 저장 된 챗 리턴하기
+        return repo.findAll();
     }
 
+
+    // WebSocket 연결 이벤트 - 사용자 수 증가
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        connectedUsers.incrementAndGet();
-        broadcastUserCount();
+        int count = userCount.incrementAndGet();
+        messagingTemplate.convertAndSend("/topic/userCount", count);
     }
 
+    // WebSocket 연결 해제 이벤트 - 사용자 수 감소
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        connectedUsers.decrementAndGet();
-        broadcastUserCount();
+        int count = userCount.decrementAndGet();
+        messagingTemplate.convertAndSend("/topic/userCount", count);
     }
 
-    private void broadcastUserCount() {
-        messagingTemplate.convertAndSend("/topic/userCount", connectedUsers.get());
-    }
-    
+    // 현재 접속자 수 REST 조회 (/chat/userCount)
     @GetMapping("/chat/userCount")
     @ResponseBody
     public int getCurrentUserCount() {
-        return connectedUsers.get();
+        return userCount.get();
     }
 }
