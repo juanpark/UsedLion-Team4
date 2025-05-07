@@ -19,7 +19,8 @@ public class SignupController {
     }
 
     @GetMapping("/signup")
-    public String signupForm() {
+    public String signupForm(org.springframework.ui.Model model) {
+        model.addAttribute("user", new UserInformation());
         return "signup";
     }
 
