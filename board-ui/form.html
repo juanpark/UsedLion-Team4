@@ -82,6 +82,7 @@
 
         const sendRequest = async (fileBytes) => {
           const postData = {
+            userId: 1,
             profileId: 1,
             view: postId ? undefined : 0,
             file: fileBytes,
