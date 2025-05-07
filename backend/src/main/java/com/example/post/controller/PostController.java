@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.post.dto.PostDetailDto;
+import com.example.post.dto.PostImage;
 import com.example.post.dto.ReplyDetailDto;
 import com.example.post.dto.ReplyTree;
 import com.example.post.dto.SaleStatus;
@@ -56,18 +57,7 @@ public class PostController {
         post.setView(postDetailDto.getView() + 1);
         postService.updatePost(postId, post);
         model.addAttribute("post", postDetailDto);
-        for (ReplyTree r : replyTree) {
-            System.out.println(r.getReply().getReplyId());
-            System.out.println(r.getReply().getContent());
 
-            if (r.getChildren() != null) {
-                for (ReplyTree child : r.getChildren()) {
-                    System.out.println(child.getReply().getReplyId());
-                    System.out.println(child.getReply().getContent());
-                }
-            }
-            System.out.println(r.getChildren().size());
-        }
         model.addAttribute("replyTree", replyTree);
         model.addAttribute("base64File", base64File);
 
@@ -106,6 +96,40 @@ public class PostController {
 
         postService.createPost(post);
         return "redirect:/post/" + post.getPostId(); // 생성된 게시물의 상세 페이지로 리다이렉트
+    }
+
+    // @GetMapping("/search")
+    // public String searchPosts(Model model) {
+    // return "searchPost";
+    // }
+
+    @GetMapping("/search/detail")
+    public String searchDetail(
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "username", required = false) String username,
+            @RequestParam(value = "content", required = false) String content,
+            Principal principal, Model model) {
+        String filter = null;
+        String condition = null;
+        List<PostDetailDto> posts = postService.searchPosts(title, username, content);
+        List<PostImage> postImages = postService.makePostImage(posts);
+        if (title != null && !title.isEmpty()) {
+            filter = "제목";
+            condition = title;
+        } else if (username != null && !username.isEmpty()) {
+            filter = "닉네임";
+            condition = username;
+        } else if (content != null && !content.isEmpty()) {
+            filter = "내용";
+            condition = content;
+        }
+
+        model.addAttribute("posts", postImages);
+        model.addAttribute("username", principal.getName());
+        model.addAttribute("filter", filter);
+        model.addAttribute("condition", condition);
+
+        return "hello";
     }
 
 }

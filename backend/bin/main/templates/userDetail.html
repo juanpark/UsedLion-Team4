@@ -101,20 +101,28 @@
             <th>제목</th>
             <th>조회수</th>
             <th>작성 날짜</th>
+            <th> 썸네일</th>
           </tr>
         </thead>
         <tbody>
           <tr th:each="post : ${posts}">
             <td>
-              <a th:href="@{/post/{postId}(postId=${post.postId})}"
-                 th:text="${post.title}"
+              <a th:href="@{/post/{postId}(postId=${post.post.postId})}"
+                 th:text="${post.post.title}"
                  style="color: #333; text-decoration: none">
                  게시글 제목
               </a>
             </td>
-            <td th:text="${post.view}">조회수</td>
-            <td th:text="${#temporals.format(post.date, 'yyyy-MM-dd HH:mm')}">
+            <td th:text="${post.post.view}">조회수</td>
+            <td th:text="${#temporals.format(post.post.date, 'yyyy-MM-dd HH:mm')}">
               작성일
+            </td>
+            <td>
+              <img
+                th:if="${post.img != null}"
+                th:src="'data:image/jpeg;base64,' + ${post.img}"
+                alt="게시글 이미지"
+              />
             </td>
           </tr>
         </tbody>
@@ -131,6 +139,7 @@
           <tr>
             <th>제목</th>
             <th>내용</th>
+            <th>작성 날짜</th>
           </tr>
         </thead>
         <tbody>
@@ -143,6 +152,8 @@
               </a>
             </td>
             <td th:text="${reply.content}">댓글 내용</td>
+            <td th:text="${#temporals.format(reply.date, 'yyyy-MM-dd HH:mm')}">
+              작성 날짜
           </tr>
         </tbody>
       </table>

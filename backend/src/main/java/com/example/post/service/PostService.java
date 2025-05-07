@@ -1,11 +1,14 @@
 package com.example.post.service;
 
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.example.post.dto.PostDetailDto;
+import com.example.post.dto.PostImage;
 import com.example.post.entity.Post;
 import com.example.post.repository.PostRepository;
 
@@ -67,6 +70,33 @@ public class PostService {
         return postRepository.findAll().stream()
                 .filter(post -> post.getProfileId().equals(profileId))
                 .collect(Collectors.toList());
+    }
+
+    public List<PostDetailDto> searchPosts(String title, String username, String content) {
+        if (title != null && !title.isEmpty()) {
+            return postRepository.findByTitleContaining(title);
+        } else if (username != null && !username.isEmpty()) {
+            return postRepository.findByNicknameContaining(username);
+        } else if (content != null && !content.isEmpty()) {
+            return postRepository.findByContentContaining(content);
+
+        }
+        return postRepository.getAllPostDetail();
+    }
+
+    public List<PostImage> makePostImage(List<PostDetailDto> posts) {
+        List<PostImage> postImages = new ArrayList<>();
+        for (PostDetailDto post : posts) {
+            System.out.println(post.getTitle());
+            String base64File = null;
+            if (post.getFile() != null) {
+                base64File = Base64.getEncoder().encodeToString(post.getFile());
+            }
+            PostImage pImage = new PostImage(post, base64File);
+            postImages.add(pImage);
+        }
+        return postImages;
+
     }
 
 }

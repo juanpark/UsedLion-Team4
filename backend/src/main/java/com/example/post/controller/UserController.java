@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.post.dto.PostDetailDto;
+import com.example.post.dto.PostImage;
 import com.example.post.dto.ReplyDetailDto;
 import com.example.post.entity.Post;
 import com.example.post.entity.Report;
@@ -86,19 +87,21 @@ public class UserController {
             model.addAttribute("username", username);
         }
         List<PostDetailDto> posts = postService.getAllPostDetail();
-        model.addAttribute("posts", posts);
+        List<PostImage> postImages = postService.makePostImage(posts);
+        model.addAttribute("posts", postImages);
         return "hello";
     }
 
     @GetMapping("/user/{profileId}")
-    public String getUser(@PathVariable Integer profileId, Model model) {
+    public String getUser(@PathVariable Integer profileId, Model model, Principal principal) {
         UserInformation user = userService.getUserById(profileId);
-        List<Post> posts = postService.getPostsByProfileId(profileId);
+        List<PostDetailDto> posts = postService.searchPosts(null, principal.getName(), null);
+        List<PostImage> postImages = postService.makePostImage(posts);
         List<Report> reports = reportRepository.findByTargetId(profileId);
         List<ReplyDetailDto> replies = replyService.getReplyByProfileId(profileId);
 
         model.addAttribute("user", user);
-        model.addAttribute("posts", posts);
+        model.addAttribute("posts", postImages);
         model.addAttribute("postCount", posts.size());
         model.addAttribute("reportCount", reports.size());
         model.addAttribute("reports", reports);
