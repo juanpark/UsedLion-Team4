@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>회원가입</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .signup-box {
+        background: white;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 350px;
+        text-align: center;
+      }
+      .signup-box h2 {
+        margin-bottom: 20px;
+      }
+      .signup-box input[type="text"],
+      .signup-box input[type="email"],
+      .signup-box input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .signup-box button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 12px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      .signup-box button:hover {
+        background: #218838;
+      }
+      .signup-box a {
+        display: block;
+        margin-top: 15px;
+        color: #007bff;
+        text-decoration: none;
+      }
+      .signup-box a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="signup-box">
+      <h2>회원가입</h2>
+      <form action="/signup" method="POST">
+        <input type="text" name="username" placeholder="아이디" required />
+        <input
+          type="password"
+          name="password"
+          placeholder="비밀번호"
+          required
+        />
+        <input type="text" name="nickname" placeholder="닉네임" required />
+        <input type="email" name="email" placeholder="이메일" required />
+        <input type="hidden" name="_csrf" value="${_csrf.token}" />
+        <!-- CSRF 토큰 추가 -->
+        <button type="submit">가입하기</button>
+      </form>
+      <a href="/login">로그인으로 돌아가기</a>
+    </div>
+  </body>
+</html>
