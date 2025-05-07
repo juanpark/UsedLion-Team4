@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>게시글 작성/수정</title>
+    <link rel="stylesheet" href="css/board.css" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>게시글 작성/수정</h1>
+    </div>
+    <div class="container">
+      <form id="post-form">
+        <div class="form-group">
+          <label for="profileId">작성자 ID</label>
+          <input
+            type="number"
+            id="profileId"
+            name="profileId"
+            value="1"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label for="title">제목</label>
+          <input type="text" id="title" name="title" required />
+        </div>
+        <div class="form-group">
+          <label for="content">내용</label>
+          <textarea id="content" name="content" rows="5" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="price">가격</label>
+          <input type="number" id="price" name="price" />
+        </div>
+        <div class="form-group">
+          <label for="complete">완료 여부</label>
+          <select id="complete" name="complete">
+            <option value="false">진행중</option>
+            <option value="true">완료</option>
+          </select>
+        </div>
+        <button class="btn" type="submit">저장</button>
+        <a class="btn" href="index.html">취소</a>
+      </form>
+    </div>
+
+    <script>
+      // 임시: 제출 이벤트 막고 알림만 띄우기
+      document.getElementById("post-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        alert("여기에 AJAX 요청을 연동하세요.");
+      });
+    </script>
+  </body>
+</html>
