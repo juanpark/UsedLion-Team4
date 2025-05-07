@@ -19,7 +19,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
-<body class="d-flex flex-column min-vh-100" style="font-family: 'Nanum Gothic', sans-serif; background-color: #fef7eb;">
+<body class="d-flex flex-column" style="height: 100%; font-family: 'Nanum Gothic', sans-serif; background-color: #fef7eb;">
 
 <!-- HEADER -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top px-4 py-2"
@@ -28,11 +28,18 @@
         <a class="navbar-brand fw-bold custom-brand" href="/dashboard">
             <img src="/static/assets/img/usedlion_kor.png" alt="UsedLion Title" style="height: 40px;">
         </a>
-        <div>
-            <a class="nav-link d-inline" href="/profile">프로필</a>
-            <a class="nav-link d-inline" href="/chat">채팅</a>
-            <a class="nav-link d-inline" href="/sell">상품 등록</a>
-            <a class="nav-link d-inline" href="/logout">로그아웃</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/sell">상품 등록</a>
+                <a class="nav-link" href="/chat">채팅 라운지</a>
+                <a class="nav-link" href="/profile">프로필</a>
+                <a class="nav-link" href="/logout">로그아웃</a>
+            </div>
         </div>
     </div>
 </nav>

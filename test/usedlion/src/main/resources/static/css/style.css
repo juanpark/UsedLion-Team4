@@ -23,6 +23,7 @@ html, body {
 body {
   display: flex;
   flex-direction: column;
+  overscroll: none;
 }
 
 /* Wrapper to allow sticky footer */
