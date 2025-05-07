@@ -10,14 +10,14 @@ import lombok.*;
 @NoArgsConstructor @AllArgsConstructor @Builder
 public class Post {
 
-    // ─── 이 부분을 post_id 로 매핑 ───────────────────────────────
+    // ─── PK 필드명 post_id 컬럼을 id 필드로 매핑 ─────────────────────
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
-    private Integer postId;
+    private Integer id;
     // ────────────────────────────────────────────────────────────
 
-    // ─── profileId 역시 profile_id 로 매핑 (DB 스키마에 따라) ───────
+    // ─── profile_id 컬럼
     @Column(name = "profile_id", nullable = false)
     private Integer profileId;
     // ────────────────────────────────────────────────────────────
