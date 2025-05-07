@@ -13,7 +13,8 @@
 <!-- Hide header and footer -->
 <div layout:fragment="content">
 
-    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+        <div class="glass-card d-flex flex-column align-items-center p-4">
 
         <!-- Logo -->
         <img src="/static/assets/img/logo-usedlion.png"
@@ -22,7 +23,7 @@
              class="lion-logo mb-4"
              style="max-width: 300px; height: auto;">
 
-        <!-- Login Box -->
+        <!-- Signup Box -->
         <div style="width: 100%; max-width: 400px;">
             <form th:action="@{/signup}" th:object="${user}" method="post">
                 <input type="email" th:field="*{email}" class="lion-input mb-3" placeholder="이메일" required>
@@ -44,7 +45,8 @@
             </div>
         </div>
 
-    </div>
+        </div> <!-- glass-card -->
+    </div> <!-- full height center wrapper -->
 
 </div>
 </body>
