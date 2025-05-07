@@ -7,6 +7,23 @@
     <title>유저 정보</title>
   </head>
   <style>
+      .table-container {
+    max-height: 300px; /* 원하는 높이로 설정 */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
     .modal {
       position: fixed;
       z-index: 100;
@@ -72,24 +89,64 @@
       </div>
     </h1>
 
-    <th:block th:each="post : ${posts}">
-      <div style="margin-bottom: 8px; color: #666; font-size: 14px">
-        | 조회수: <span th:text="${post.view}">조회수</span> | 작성 날짜:
-        <span th:text="${#temporals.format(post.date, 'yyyy-MM-dd HH:mm')}">
-          작성일
-        </span>
-      </div>
-
-      <div style="font-size: 20px; font-weight: bold; margin-bottom: 10px">
-        제목:
-        <a
-          th:href="@{/post/{postId}(postId=${post.postId})}"
-          th:text="${post.title}"
-          style="color: #333; text-decoration: none"
-          >게시글 제목</a
-        >
-      </div>
-    </th:block>
+    
+    <p>
+      <h2 th:text="'게시글 수: ' + ${postCount} + '개'">게시글 수: 0개</h2>
+    </p>
+    <h2>게시글 목록</h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>제목</th>
+            <th>조회수</th>
+            <th>작성 날짜</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="post : ${posts}">
+            <td>
+              <a th:href="@{/post/{postId}(postId=${post.postId})}"
+                 th:text="${post.title}"
+                 style="color: #333; text-decoration: none">
+                 게시글 제목
+              </a>
+            </td>
+            <td th:text="${post.view}">조회수</td>
+            <td th:text="${#temporals.format(post.date, 'yyyy-MM-dd HH:mm')}">
+              작성일
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <p>
+      <h2 th:text="'댓글 수: ' + ${replyCount} + '개'">댓글 수: 0개</h2>
+    </p>
+    <h2>댓글 목록</h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>제목</th>
+            <th>내용</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="reply : ${replies}">
+            <td>
+              <a th:href="@{/post/{postId}(postId=${reply.postId})}"
+                 th:text="${reply.postTitle}"
+                 style="color: #333; text-decoration: none">
+                 게시글 제목
+              </a>
+            </td>
+            <td th:text="${reply.content}">댓글 내용</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <button onclick="history.back()">이전으로</button>
   </body>
 </html>

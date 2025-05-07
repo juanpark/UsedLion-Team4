@@ -23,6 +23,10 @@ public class ReplyService {
         return replyRepository.getReplyByPostId(postId);
     }
 
+    public List<ReplyDetailDto> getReplyByProfileId(Integer profileId) {
+        return replyRepository.getReplyByProfileId(profileId);
+    }
+
     public void createReply(Integer postId) {
 
     }

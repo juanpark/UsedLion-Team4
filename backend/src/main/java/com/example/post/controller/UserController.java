@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.post.dto.PostDetailDto;
+import com.example.post.dto.ReplyDetailDto;
 import com.example.post.entity.Post;
 import com.example.post.entity.Report;
 import com.example.post.entity.UserInformation;
 import com.example.post.repository.ReportRepository;
 import com.example.post.repository.UserRepository;
 import com.example.post.service.PostService;
+import com.example.post.service.ReplyService;
 import com.example.post.service.UserService;
 
 @Controller
@@ -32,9 +34,11 @@ public class UserController {
     private final PostService postService;
     private final UserService userService;
     private final ReportRepository reportRepository;
+    private final ReplyService replyService;
 
     public UserController(UserRepository userRepository, PostService postService, UserService userService,
-            ReportRepository reportRepository) {
+            ReportRepository reportRepository, ReplyService replyService) {
+        this.replyService = replyService;
         this.reportRepository = reportRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
@@ -91,11 +95,15 @@ public class UserController {
         UserInformation user = userService.getUserById(profileId);
         List<Post> posts = postService.getPostsByProfileId(profileId);
         List<Report> reports = reportRepository.findByTargetId(profileId);
+        List<ReplyDetailDto> replies = replyService.getReplyByProfileId(profileId);
 
         model.addAttribute("user", user);
         model.addAttribute("posts", posts);
+        model.addAttribute("postCount", posts.size());
         model.addAttribute("reportCount", reports.size());
         model.addAttribute("reports", reports);
+        model.addAttribute("replies", replies);
+        model.addAttribute("replyCount", replies.size());
         return "userDetail";
     }
 

@@ -23,5 +23,6 @@ public class ReplyDetailDto {
     private String content;
     private LocalDateTime date;
     private String username;
+    private String postTitle;
 
 }
