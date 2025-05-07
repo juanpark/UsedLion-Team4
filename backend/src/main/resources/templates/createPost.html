@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>게시글 작성</title>
+  </head>
+  <body>
+    <h2>게시글 작성</h2>
+    <form
+      th:action="@{/post/create}"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      <label for="title">제목:</label><br />
+      <input type="text" id="title" name="title" required /><br /><br />
+
+      <label for="price">가격:</label><br />
+      <input type="number" id="price" name="price" required /><br /><br />
+
+      <label for="content">내용:</label><br />
+      <textarea
+        id="content"
+        name="content"
+        rows="5"
+        cols="40"
+        required
+      ></textarea
+      ><br /><br />
+
+      <label for="status">판매 상태:</label><br />
+      <select id="status" name="status" required>
+        <option value="ONSALE">판매중</option>
+        <option value="RESERVED">예약중</option>
+        <option value="SOLDOUT">판매완료</option></select
+      ><br /><br />
+
+      <label for="file">이미지 첨부:</label><br />
+      <input type="file" id="file" name="file" accept="image/*" /><br /><br />
+
+      <button type="submit">등록</button>
+    </form>
+  </body>
+</html>

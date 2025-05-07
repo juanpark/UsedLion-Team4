@@ -19,6 +19,7 @@ public class Post {
     private Integer postId;
     private Integer profileId;
     private Integer view;
+    @Lob
     private byte[] file;
     private String title;
     private Integer price;
