@@ -103,11 +103,11 @@
       <div class="post-content">
         <p th:text="${post.content}" id="postContent"></p>
       </div>
-      <div>
-        <p>이미지:</p>
-        <img th:if="${base64File != null}" th:src="'data:image/jpeg;base64,' + ${base64File}" alt="게시글 이미지" />
-        <p th:if="${base64File == null}">이미지가 없습니다.</p>
-    </div>
+      <div th:if="${imageList != null}">
+        <div th:each="img : ${imageList}">
+          <img th:src="'data:image/jpeg;base64,' + ${img}" alt="이미지" style="max-width: 200px; max-height: 200px;" />
+        </div>
+      </div>
     </div>
 
     <div style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">

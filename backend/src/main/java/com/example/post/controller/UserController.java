@@ -18,33 +18,32 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.post.dto.PostDetailDto;
 import com.example.post.dto.PostImage;
 import com.example.post.dto.ReplyDetailDto;
-import com.example.post.entity.Post;
 import com.example.post.entity.Report;
 import com.example.post.entity.UserInformation;
-import com.example.post.repository.ReportRepository;
-import com.example.post.repository.UserRepository;
+import com.example.post.service.ImageService;
 import com.example.post.service.PostService;
 import com.example.post.service.ReplyService;
+import com.example.post.service.ReportService;
 import com.example.post.service.UserService;
 
 @Controller
 @CrossOrigin
 public class UserController {
-    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final PostService postService;
     private final UserService userService;
-    private final ReportRepository reportRepository;
+    private final ReportService reportService;
     private final ReplyService replyService;
+    private final ImageService imageService;
 
-    public UserController(UserRepository userRepository, PostService postService, UserService userService,
-            ReportRepository reportRepository, ReplyService replyService) {
+    public UserController(PostService postService, UserService userService,
+            ReportService reportService, ReplyService replyService, ImageService imageService) {
         this.replyService = replyService;
-        this.reportRepository = reportRepository;
-        this.userRepository = userRepository;
+        this.reportService = reportService;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.postService = postService;
         this.userService = userService;
+        this.imageService = imageService;
     }
 
     @GetMapping("/")
@@ -64,13 +63,13 @@ public class UserController {
     @PostMapping("/signup")
     public String signup(@ModelAttribute UserInformation user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        userService.createUser(user);
         return "redirect:/login";
     }
 
     @PostMapping("/login")
     public String login(@ModelAttribute UserInformation user, Model model) {
-        UserInformation foundUser = userRepository.findByUsername(user.getUsername());
+        UserInformation foundUser = userService.getUserByUsername(user.getUsername());
 
         if (foundUser != null && passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
             return "hello";
@@ -95,9 +94,10 @@ public class UserController {
     @GetMapping("/user/{profileId}")
     public String getUser(@PathVariable Integer profileId, Model model, Principal principal) {
         UserInformation user = userService.getUserById(profileId);
-        List<PostDetailDto> posts = postService.searchPosts(null, principal.getName(), null);
+
+        List<PostDetailDto> posts = postService.searchPosts(null, user.getUsername(), null);
         List<PostImage> postImages = postService.makePostImage(posts);
-        List<Report> reports = reportRepository.findByTargetId(profileId);
+        List<Report> reports = reportService.getByProfileId(profileId);
         List<ReplyDetailDto> replies = replyService.getReplyByProfileId(profileId);
 
         model.addAttribute("user", user);
@@ -121,13 +121,13 @@ public class UserController {
             Principal principal,
             RedirectAttributes redirectAttributes) {
         String username = principal.getName();
-        UserInformation user = userRepository.findByUsername(username);
+        UserInformation user = userService.getUserByUsername(username);
         Report report = new Report();
         report.setProfileId(user.getProfileId());
         report.setTargetId(profileId);
         report.setContent(reason);
 
-        reportRepository.save(report);
+        reportService.createReport(report);
         return "redirect:/post/" + postId; // Redirect to the post detail page after reporting
     }
 

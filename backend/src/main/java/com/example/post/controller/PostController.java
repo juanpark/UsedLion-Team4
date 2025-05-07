@@ -3,6 +3,7 @@ package com.example.post.controller;
 import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -23,7 +24,9 @@ import com.example.post.dto.PostImage;
 import com.example.post.dto.ReplyDetailDto;
 import com.example.post.dto.ReplyTree;
 import com.example.post.dto.SaleStatus;
+import com.example.post.entity.Image;
 import com.example.post.entity.Post;
+import com.example.post.service.ImageService;
 import com.example.post.service.PostService;
 import com.example.post.service.ReplyService;
 import com.example.post.service.UserService;
@@ -35,11 +38,14 @@ public class PostController {
     private final PostService postService;
     private final ReplyService replyService;
     private final UserService userService;
+    private final ImageService imageService;
 
-    public PostController(PostService postService, ReplyService replyService, UserService userService) {
+    public PostController(PostService postService, ReplyService replyService, UserService userService,
+            ImageService imageService) {
         this.userService = userService;
         this.replyService = replyService;
         this.postService = postService;
+        this.imageService = imageService;
     }
 
     @GetMapping("/{postId}")
@@ -47,6 +53,12 @@ public class PostController {
         PostDetailDto postDetailDto = postService.getPostDetailByPostId(postId);
         List<ReplyDetailDto> replyDto = replyService.getReplyByPostId(postId);
         List<ReplyTree> replyTree = replyService.MakeTree(replyDto);
+        List<Image> postImages = imageService.getImagesByPostId(postId);
+        List<String> imageList = new ArrayList<>();
+        for (Image image : postImages) {
+            String base64Image = Base64.getEncoder().encodeToString(image.getFile());
+            imageList.add(base64Image);
+        }
         String base64File = postDetailDto.getFile() != null
                 ? Base64.getEncoder().encodeToString(postDetailDto.getFile())
                 : null;
@@ -59,7 +71,7 @@ public class PostController {
         model.addAttribute("post", postDetailDto);
 
         model.addAttribute("replyTree", replyTree);
-        model.addAttribute("base64File", base64File);
+        model.addAttribute("imageList", imageList);
 
         return "postDetail";
     }
@@ -79,22 +91,27 @@ public class PostController {
             @RequestParam("price") Integer price,
             @RequestParam("content") String content,
             @RequestParam("status") SaleStatus status,
-            @RequestParam("file") MultipartFile file,
+            @RequestParam("file") List<MultipartFile> files,
             Principal principal) throws IOException {
 
         String username = principal.getName(); // 로그인한 사용자의 ID 또는 username
 
         Post post = new Post();
+
         post.setTitle(title);
         post.setPrice(price);
         post.setContent(content);
         post.setStatus(status);
         post.setDate(LocalDateTime.now());
         post.setView(0);
-        post.setFile(file.isEmpty() ? null : file.getBytes());
         post.setProfileId(userService.getUserByUsername(username).getProfileId()); // 사용자 정보에서 profileId 설정
 
         postService.createPost(post);
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                imageService.uploadImage(post.getPostId(), file);
+            }
+        }
         return "redirect:/post/" + post.getPostId(); // 생성된 게시물의 상세 페이지로 리다이렉트
     }
 

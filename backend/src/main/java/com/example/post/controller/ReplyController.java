@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.post.dto.ReplyDetailDto;
 import com.example.post.entity.Reply;
 import com.example.post.entity.UserInformation;
-import com.example.post.repository.ReplyRepository;
 import com.example.post.service.ReplyService;
 import com.example.post.service.UserService;
 
@@ -25,12 +24,10 @@ import com.example.post.service.UserService;
 public class ReplyController {
     private final ReplyService replyService;
     private final UserService userService;
-    private final ReplyRepository replyRepository;
 
-    public ReplyController(ReplyService replyService, UserService userService, ReplyRepository replyRepository) {
+    public ReplyController(ReplyService replyService, UserService userService) {
         this.replyService = replyService;
         this.userService = userService;
-        this.replyRepository = replyRepository;
     }
 
     @GetMapping("/{postId}")
@@ -50,10 +47,10 @@ public class ReplyController {
         reply.setLevel(0);
         reply.setDate(LocalDateTime.now());
 
-        replyRepository.save(reply);
+        replyService.createReply(reply);
         reply.setRef(0);
         reply.setStart(reply.getReplyId());
-        replyRepository.save(reply);
+        replyService.createReply(reply);
 
         return "redirect:/post/" + postId;
     }
@@ -63,7 +60,7 @@ public class ReplyController {
             @RequestParam String content, Principal principal) {
 
         Reply reply = new Reply();
-        Reply target = replyRepository.findById(parentReplyId).orElse(null);
+        Reply target = replyService.getReplyByReplyId(parentReplyId);
         reply.setContent(content);
         reply.setPostId(postId);
         UserInformation user = userService.getUserByUsername(principal.getName());
@@ -73,7 +70,7 @@ public class ReplyController {
         reply.setStart(target.getStart());
         reply.setDate(LocalDateTime.now());
 
-        replyRepository.save(reply);
+        replyService.createReply(reply);
         return "redirect:/post/" + postId;
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.post.dto.ReplyDetailDto;
 import com.example.post.dto.ReplyTree;
+import com.example.post.entity.Reply;
 import com.example.post.repository.ReplyRepository;
 
 @Service
@@ -27,7 +28,12 @@ public class ReplyService {
         return replyRepository.getReplyByProfileId(profileId);
     }
 
-    public void createReply(Integer postId) {
+    public Reply getReplyByReplyId(Integer replyId) {
+        return replyRepository.findById(replyId).orElse(null);
+    }
+
+    public void createReply(Reply reply) {
+        replyRepository.save(reply);
 
     }
 

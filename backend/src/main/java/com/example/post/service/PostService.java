@@ -9,14 +9,17 @@ import org.springframework.stereotype.Service;
 
 import com.example.post.dto.PostDetailDto;
 import com.example.post.dto.PostImage;
+import com.example.post.entity.Image;
 import com.example.post.entity.Post;
 import com.example.post.repository.PostRepository;
 
 @Service
 public class PostService {
     private final PostRepository postRepository;
+    private final ImageService imageService;
 
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, ImageService imageService) {
+        this.imageService = imageService;
         this.postRepository = postRepository;
     }
 
@@ -87,10 +90,12 @@ public class PostService {
     public List<PostImage> makePostImage(List<PostDetailDto> posts) {
         List<PostImage> postImages = new ArrayList<>();
         for (PostDetailDto post : posts) {
-            System.out.println(post.getTitle());
+            List<Image> images = imageService.getImagesByPostId(post.getPostId());
             String base64File = null;
-            if (post.getFile() != null) {
-                base64File = Base64.getEncoder().encodeToString(post.getFile());
+            if (images != null && !images.isEmpty()) {
+                Image image = images.get(0);
+                byte[] imageBytes = image.getFile();
+                base64File = Base64.getEncoder().encodeToString(imageBytes);
             }
             PostImage pImage = new PostImage(post, base64File);
             postImages.add(pImage);
