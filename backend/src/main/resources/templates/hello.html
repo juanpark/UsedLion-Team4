@@ -62,7 +62,6 @@
             <div
               style="font-size: 16px; white-space: pre-wrap; margin-top: 10px"
             >
-              <span>내용:</span>
               <p th:text="${post.content.length() > 50 ? #strings.substring(post.content, 0, 20) + '...' : post.content}"></p>
               </p>
             </div>

@@ -68,9 +68,12 @@
     }
   </script>
   <body>
+    <div>
+      <button onclick="location.href='/hello'" style="padding: 5px 10px; font-size: 14px;">← 뒤로가기</button>
+    </div>
     <div class="post-container">
       <span class="post-title" th:text="${post.title}">제목</span>
-      <button type="button" onclick="location.href='/hello'">게시판 목록</button>
+
       
       </form>
 
@@ -98,7 +101,6 @@
       </div>
 
       <div class="post-content">
-        <strong>내용:</strong><br />
         <p th:text="${post.content}" id="postContent"></p>
       </div>
     </div>
