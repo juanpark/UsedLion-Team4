@@ -1,4 +1,4 @@
-package com.example.reply.dto;
+package com.example.kyu.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.GeneratedValue;

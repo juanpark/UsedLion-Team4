@@ -1,6 +1,6 @@
-package com.example.reply.service;
+package com.example.kyu.service;
 
-import com.example.reply.dto.ReplyDTO;
+import com.example.kyu.dto.ReplyDTO;
 
 import java.util.List;
 

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>유저 정보</title>
+  </head>
+  <style>
+    .modal {
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      width: 50%;
+      border-radius: 8px;
+    }
+
+    .close {
+      float: right;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    function openReportModal() {
+      document.getElementById("reportModal").style.display = "block";
+    }
+
+    function closeReportModal() {
+      document.getElementById("reportModal").style.display = "none";
+    }
+
+    // 클릭 외 영역 클릭 시 닫기
+    window.onclick = function (event) {
+      const modal = document.getElementById("reportModal");
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    };
+  </script>
+  <body>
+    <h1>
+      <small>닉네임: <span th:text="${user.nickname}"></span></small>
+      <small>이메일: <span th:text="${user.email}">작성자</span></small>
+      <p>
+        신고:
+        <a href="javascript:void(0);" onclick="openReportModal()">
+          [[${reportCount}]]회
+        </a>
+      </p>
+      <div id="reportModal" class="modal" style="display: none">
+        <div class="modal-content">
+          <span class="close" onclick="closeReportModal()">&times;</span>
+          <h5>신고 내역</h5>
+          <ul>
+            <li th:each="report : ${reports}">
+              사유 : <span th:text="${report.content}">신고 사유</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </h1>
+
+    <th:block th:each="post : ${posts}">
+      <div style="margin-bottom: 8px; color: #666; font-size: 14px">
+        | 조회수: <span th:text="${post.view}">조회수</span> | 작성 날짜:
+        <span th:text="${#temporals.format(post.date, 'yyyy-MM-dd HH:mm')}">
+          작성일
+        </span>
+      </div>
+
+      <div style="font-size: 20px; font-weight: bold; margin-bottom: 10px">
+        제목:
+        <a
+          th:href="@{/post/{postId}(postId=${post.postId})}"
+          th:text="${post.title}"
+          style="color: #333; text-decoration: none"
+          >게시글 제목</a
+        >
+      </div>
+    </th:block>
+    <button onclick="history.back()">이전으로</button>
+  </body>
+</html>

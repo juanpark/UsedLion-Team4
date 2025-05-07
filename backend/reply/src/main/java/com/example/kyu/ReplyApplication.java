@@ -1,4 +1,4 @@
-package com.example.reply;
+package com.example.kyu;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

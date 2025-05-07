@@ -1,4 +1,4 @@
-package com.example.reply;
+package com.example.kyu;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

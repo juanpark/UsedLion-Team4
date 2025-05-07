@@ -1,8 +1,8 @@
-package com.example.reply.service;
+package com.example.kyu.service;
 
-import com.example.reply.dto.ReplyDTO;
-import com.example.reply.entity.Reply;
-import com.example.reply.repository.ReplyRepository;
+import com.example.kyu.dto.ReplyDTO;
+import com.example.kyu.entity.Reply;
+import com.example.kyu.repository.ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

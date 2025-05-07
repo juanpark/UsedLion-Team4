@@ -1,0 +1,22 @@
+<!-- templates/edit.html -->
+<div th:fragment="editForm (reply)">
+  <h1>댓글 수정</h1>
+
+  <form th:action="@{/replies/edit/{id}(id=${reply.replyId})}"
+        th:object="${reply}"
+        method="post">
+    <!-- postId 히든 필드 -->
+    <input type="hidden" th:field="*{postId}" />
+
+    <!-- textarea는 self-closing 금지 -->
+    <textarea th:field="*{content}"
+              rows="3"
+              required></textarea>
+
+    <div style="margin-top:8px;">
+      <button type="submit">수정완료</button>
+      <!-- 취소 버튼은 모달이라면 JS close 함수, 아니라면 목록으로 이동 -->
+      <button type="button" onclick="closeEditModal()">취소</button>
+    </div>
+  </form>
+</div>

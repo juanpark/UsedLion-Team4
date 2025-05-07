@@ -1,10 +1,9 @@
-package com.example.reply.controller;
+package com.example.kyu.controller;
 
-import com.example.reply.dto.ReplyDTO;
-import com.example.reply.service.ReplyService;
+import com.example.kyu.dto.ReplyDTO;
+import com.example.kyu.service.ReplyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,7 +33,7 @@ public class ReplyViewcontroller {
         model.addAttribute("newReply",
                 new ReplyDTO(null, null, 0, 0, postId, "", null));
 
-        return "reply/list";  // → list.html 에서 ${replies} 로 접근 가능
+        return "list";  // → list.html 에서 ${replies} 로 접근 가능
     }
 
 
@@ -48,31 +47,30 @@ public class ReplyViewcontroller {
     ){
         if(br.hasErrors()) {
             model.addAttribute("replies",svc.findByPostId(postId));
-            return "reply/list";
+            return "postDetail";
         }
         svc.create(dto);
-        return "redirect:/replies/post/" + postId;
+        return "redirect:/post/" + postId;
     }
 
-    /** 3) 수정 Form 보여주기 **/
+    /** 3) 댓글 수정 Form 보여주기 - Fragment 반환 **/
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Integer id, Model model) {
         ReplyDTO dto = svc.findById(id);
-        model.addAttribute("reply",dto);
-        return "reply/edit";
+        model.addAttribute("reply", dto);
+        return "edit :: editForm";  // Fragment only
     }
 
     /** 4) 수정 처리하기 **/
     @PostMapping("/edit/{id}")
-    public String edit(
-            @PathVariable Integer id,
-            @ModelAttribute("reply") @Valid ReplyDTO dto,
-            BindingResult br
-    ){
-        if(br.hasErrors()) return "reply/edit";
-        svc.update(id,dto);
-        // 댓글 리스트로 돌아가야 하므로 postId 기반 url
-        return "redirect:/replies/post/" + dto.getPostId();
+    public String update(@PathVariable Integer id,
+                         @Valid @ModelAttribute ReplyDTO dto,
+                         BindingResult br) {
+        if (br.hasErrors()) {
+            return "edit :: editForm";  // 유효성 에러 시 다시 fragment 반환
+        }
+        svc.update(id, dto);
+        return "redirect:/post/" + dto.getPostId();
     }
 
     /** 5) 삭제하기  **/
@@ -80,6 +78,6 @@ public class ReplyViewcontroller {
     public String delete(@PathVariable Integer id) {
         Integer postId = svc.findById(id).getPostId();
         svc.delete(id);
-        return "redirect:/replies/post/" + postId;
+        return "redirect:/post/" + postId;
     }
 }

@@ -1,7 +1,7 @@
-package com.example.reply.controller;
+package com.example.kyu.controller;
 
-import com.example.reply.dto.ReplyDTO;
-import com.example.reply.service.ReplyService;
+import com.example.kyu.dto.ReplyDTO;
+import com.example.kyu.service.ReplyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
