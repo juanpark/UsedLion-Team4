@@ -10,38 +10,38 @@ import lombok.*;
 @NoArgsConstructor @AllArgsConstructor @Builder
 public class Post {
 
-    // ─── PK 필드명 post_id 컬럼을 id 필드로 매핑 ─────────────────────
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name = "id")  // DB 컬럼명에 맞춤
     private Integer id;
-    // ────────────────────────────────────────────────────────────
 
-    // ─── profile_id 컬럼
-    @Column(name = "profile_id", nullable = false)
-    private Integer profileId;
-    // ────────────────────────────────────────────────────────────
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
 
+    @Column(name = "view")
     private Integer view;
 
     @Lob
     private byte[] file;
 
     private String title;
+
     private Integer price;
+
     private String content;
 
-    @Column(
-            name = "date",
-            nullable = false,
-            insertable = false,
-            updatable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-    )
-    private LocalDateTime date;
+    @Column(name = "created_at", insertable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "complete")
+    private Boolean complete;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('ONSALE','RESERVED','SOLDOUT')")
     private SaleStatus status;
+
+    // profile_id 컬럼도 존재하므로 여기에 포함
+    @Column(name = "profile_id")
+    private Integer profileId;
 }
 
