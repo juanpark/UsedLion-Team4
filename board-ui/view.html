@@ -9,21 +9,41 @@
     />
     <style>
       body {
-        background-color: #f8fafc;
+        background-color: #ffffff;
+        font-family: "Noto Sans KR", sans-serif;
       }
       .header {
         background: linear-gradient(to right, #4f46e5, #3b82f6);
         color: white;
-        padding: 1rem;
+        padding: 1rem 2rem;
       }
       .btn-back {
-        background-color: #6366f1;
+        background-color: #4f46e5;
         border: none;
+        color: white;
+      }
+      .post-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+      .post-content {
+        font-size: 1rem;
+        color: #374151;
+      }
+      .post-meta {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+      img {
+        max-height: 300px;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        object-fit: cover;
       }
     </style>
   </head>
   <body>
-    <div class="header d-flex justify-content-between align-items-center px-4">
+    <div class="header d-flex justify-content-between align-items-center">
       <h4 class="m-0">📄 글 상세보기</h4>
       <a href="index.html" class="btn btn-light">목록</a>
     </div>
@@ -49,19 +69,25 @@
               ? new Date(data.createdAt).toLocaleString("ko-KR")
               : "";
 
-            const imageHtml = data.imageUrl
-              ? `<img src="${data.imageUrl}" class="img-fluid mb-3"/>`
+            const imageHtml = data.file
+              ? `<img src="data:image/jpeg;base64,${btoa(
+                  String.fromCharCode(...data.file)
+                )}" class="img-fluid" />`
               : "";
 
             div.innerHTML = `
-              <h2>${data.title}</h2>
-              <p class="text-muted">${created}</p>
+              <div class="post-title mb-1">${data.title}</div>
+              <div class="post-meta mb-2">${created}</div>
               ${imageHtml}
-              <p><strong>가격:</strong> ${data.price}원</p>
-              <p><strong>내용:</strong></p>
-              <p>${data.content}</p>
-              <div class="d-flex gap-2">
-                <a href="form.html?id=${data.id}" class="btn btn-warning">✏️ 수정</a>
+              <p class="post-content"><strong>가격:</strong> ${data.price.toLocaleString()}원</p>
+              <p class="post-content"><strong>상태:</strong> ${data.status}</p>
+              <hr />
+              <p class="post-content"><strong>내용:</strong></p>
+              <p class="post-content">${data.content}</p>
+              <div class="d-flex gap-2 mt-4">
+                <a href="form.html?id=${
+                  data.id
+                }" class="btn btn-warning">✏️ 수정</a>
                 <button class="btn btn-danger" id="deleteBtn">🗑️ 삭제</button>
                 <a href="index.html" class="btn btn-back">목록으로</a>
               </div>
