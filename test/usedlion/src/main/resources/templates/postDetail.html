@@ -130,7 +130,7 @@
         조회수: <span th:text="${post.view}">0</span><br />
         작성자:
         <a
-          th:href="@{/user/{userId}(userId=${post.userId})}"
+          th:href="@{/profile}"
           th:text="${post.username}"
           >작성자</a
         >
