@@ -1,64 +1,98 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-  <script>
-    function openReportModal() {
-      document.getElementById("reportModal").style.display = "block";
-      document.getElementById("modalBackdrop").style.display = "block";
-    }
+<!-- templates/fragments/replyNode.html -->
+<th:block xmlns:th="http://www.thymeleaf.org"
+          xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+          th:fragment="reply(node, depth, postId)">
+  <div th:style="'margin-left:' + (${depth} * 40) + 'px'">
 
-    function closeReportModal() {
-      document.getElementById("reportModal").style.display = "none";
-      document.getElementById("modalBackdrop").style.display = "none";
-    }
-  </script>
-  <body>
-    <th:block th:fragment="reply(node, depth,postId)">
-      <div th:style="'margin-left:' + (${depth} * 40) + 'px'">
-        <p>
-          <strong>
-            <a
-              th:href="@{/user/{profileId}(profileId=${node.reply.profileId})}"
-              th:text="${node.reply.username}"
-              >작성자</a
-            >
-          </strong>
-          <span
-            th:text="${#temporals.format(node.reply.date, 'yyyy-MM-dd HH:mm')}"
-            >날짜</span
-          >
-          <button type="button" onclick="openReportModal()">신고하기</button><br />
-          <br />
-          <strong th:text="${node.reply.content}">댓글 내용</strong>
-          <form
-            th:action="@{/reply/{postId}/{parentReplyId}(postId=${postId}, parentReplyId=${node.reply.replyId})}"
-            method="POST"
-          >
-            <input
-              type="text"
-              name="content"
-              placeholder="대댓글을 입력하세요"
-              required
-            />
-            <button type="submit">댓글 달기</button>
-          </form>
-        </p>
-        <div id="reportModal" class="modal" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border:1px solid #ccc; z-index:1000;">
-          <form th:action="@{/report/{postId}/{profileId}(postId=${postId}, profileId=${node.reply.profileId})}" method="post">
-            <h3>신고 사유 입력</h3>
-            <textarea name="reason" rows="4" cols="40" placeholder="내용" required></textarea><br><br>
-            <button type="submit">제출</button>
-            <button type="button" onclick="closeReportModal()">취소</button>
-          </form>
-        </div>
-      </div>
-      <th:block
-        th:if="${node.children != null}"
-        th:each="child : ${node.children}"
-      >
-        <div
-          th:replace="~{replyNode :: reply(${child}, ${depth + 1}, ${postId})}"
-        ></div>
-      </th:block>
-    </th:block>
-  </body>
-</html>
+    <!-- 1) 메타 정보 (헤더) -->
+    <div class="reply-header" style="margin-bottom:4px;">
+      <strong>
+        <a th:href="@{/user/{profileId}(profileId=${node.reply.profileId})}"
+           th:text="${node.reply.username}">작성자</a>
+      </strong>
+      <span th:text="${#temporals.format(node.reply.date,'yyyy-MM-dd HH:mm')}">날짜</span>
+      <button type="button"
+              th:onclick="'openReportModal(' + ${node.reply.replyId} + ')'"
+      >신고</button>
+
+      <sec:authorize access="isAuthenticated()">
+        <th:block th:if="${#authentication.principal.username == node.reply.username}">
+          <button type="button"
+                  th:onclick="'openEditModal(' + ${node.reply.replyId} + ')'"
+          >수정</button>
+          <button type="button"
+                  th:onclick="'openDeleteModal(' + ${node.reply.replyId} + ')'"
+          >삭제</button>
+        </th:block>
+      </sec:authorize>
+    </div>
+
+    <!-- 2) 댓글 본문 -->
+    <div class="reply-content" style="margin-bottom:8px;">
+      <p th:text="${node.reply.content}">댓글 내용</p>
+    </div>
+
+    <!-- 3) 신고 모달 -->
+    <div th:id="'reportModal-' + ${node.reply.replyId}" class="modal">
+      <form th:action="@{/report/{postId}/{profileId}(
+                      postId=${postId},
+                      profileId=${node.reply.profileId})}"
+            method="post">
+        <h3>신고 사유 입력</h3>
+        <textarea name="reason" rows="4" cols="40" required></textarea><br><br>
+        <button type="submit">제출</button>
+        <button type="button"
+                th:onclick="'closeModal(\'reportModal-' + ${node.reply.replyId} + '\')'">
+          취소
+        </button>
+      </form>
+    </div>
+
+    <!-- 4) 수정 모달 -->
+    <div th:id="'editModal-' + ${node.reply.replyId}" class="modal">
+      <form th:action="@{/reply/edit/{replyId}(
+                      replyId=${node.reply.replyId})}"
+            method="post">
+        <h3>댓글 수정</h3>
+        <textarea name="content"
+                  rows="3" cols="40"
+                  th:text="${node.reply.content}"
+                  required></textarea><br><br>
+        <button type="submit">수정완료</button>
+        <button type="button"
+                th:onclick="'closeModal(\'editModal-' + ${node.reply.replyId} + '\')'">
+          취소
+        </button>
+      </form>
+    </div>
+
+    <!-- 5) 삭제 모달 -->
+    <div th:id="'deleteModal-' + ${node.reply.replyId}" class="modal">
+      <p>정말 이 댓글을 삭제하시겠습니까?</p>
+      <form th:action="@{/reply/delete/{replyId}(
+                      replyId=${node.reply.replyId})}"
+            method="post">
+        <button type="submit">삭제</button>
+        <button type="button"
+                th:onclick="'closeModal(\'deleteModal-' + ${node.reply.replyId} + '\')'">
+          취소
+        </button>
+      </form>
+    </div>
+
+    <!-- 6) 대댓글 입력 폼 -->
+    <form th:action="@{/reply/{postId}/{parentReplyId}(
+                    postId=${postId},
+                    parentReplyId=${node.reply.replyId})}"
+          method="post">
+      <input type="text" name="content" placeholder="대댓글을 입력하세요" required />
+      <button type="submit">답글</button>
+    </form>
+
+  </div>
+
+  <!-- 자식 댓글 재귀 호출 -->
+  <th:block th:if="${node.children}" th:each="child : ${node.children}">
+    <div th:replace="~{replyNode :: reply(${child}, ${depth + 1}, ${postId})}"></div>
+  </th:block>
+</th:block>

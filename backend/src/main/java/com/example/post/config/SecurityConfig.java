@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
 @Configuration
 public class SecurityConfig {
 
@@ -19,24 +18,21 @@ public class SecurityConfig {
                 this.userDetailsService = userDetailsService;
         }
 
-        // 람다 방식으로 HttpSecurity 설정
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
-                                .authorizeRequests(authorizeRequests -> authorizeRequests
-                                                .requestMatchers("/login", "/signup", "/css/**", "/js/**").permitAll() // 없이
-                                                                                                                       // 접근
-                                                                                                                       // 가능
-                                                .anyRequest().authenticated())
-                                .formLogin(formLogin -> formLogin
-                                                .loginPage("/login")
-                                                .permitAll()
-                                                .defaultSuccessUrl("/hello", true)
-                                                .failureUrl("/login?error=true"))
-                                .logout(logout -> logout
-                                                .logoutSuccessUrl("/login?logout=true")
-                                                .permitAll())
-                                .csrf().disable();
+                        .authorizeHttpRequests(authorize -> authorize
+                                .requestMatchers("/login", "/signup", "/css/**", "/js/**").permitAll()
+                                .anyRequest().authenticated())
+                        .formLogin(formLogin -> formLogin
+                                .loginPage("/login")
+                                .permitAll()
+                                .defaultSuccessUrl("/hello", true)
+                                .failureUrl("/login?error=true"))
+                        .logout(logout -> logout
+                                .logoutSuccessUrl("/login?logout=true")
+                                .permitAll())
+                        .csrf(csrf -> csrf.disable()); // ✅ 변경된 부분
 
                 return http.build();
         }
@@ -49,9 +45,10 @@ public class SecurityConfig {
         @Bean
         public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
                 AuthenticationManagerBuilder authenticationManagerBuilder = http
-                                .getSharedObject(AuthenticationManagerBuilder.class);
-                authenticationManagerBuilder.userDetailsService(userDetailsService)
-                                .passwordEncoder(passwordEncoder());
+                        .getSharedObject(AuthenticationManagerBuilder.class);
+                authenticationManagerBuilder
+                        .userDetailsService(userDetailsService)
+                        .passwordEncoder(passwordEncoder());
                 return authenticationManagerBuilder.build();
         }
 }

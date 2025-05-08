@@ -34,17 +34,28 @@ public class ReplyService {
 
     public void createReply(Reply reply) {
         replyRepository.save(reply);
-
     }
 
-    public List<ReplyTree> MakeTree(List<ReplyDetailDto> List) {
+    public void updateReply(Integer replyId, Reply updatedReply) {
+        Reply existing = replyRepository.findById(replyId)
+                .orElseThrow(() -> new RuntimeException("댓글이 존재하지 않습니다."));
+        existing.setContent(updatedReply.getContent());
+        existing.setDate(updatedReply.getDate()); // 수정 시 시간도 갱신
+        replyRepository.save(existing);
+    }
+
+    public void deleteReply(Integer replyId) {
+        replyRepository.deleteById(replyId);
+    }
+
+    public List<ReplyTree> MakeTree(List<ReplyDetailDto> list) {
         Map<Integer, ReplyTree> replyMap = new HashMap<>();
         List<ReplyTree> root = new ArrayList<>();
 
-        for (ReplyDetailDto reply : List) {
+        for (ReplyDetailDto reply : list) {
             replyMap.put(reply.getReplyId(), new ReplyTree(reply));
         }
-        for (ReplyDetailDto reply : List) {
+        for (ReplyDetailDto reply : list) {
             if (reply.getRef() == 0) {
                 root.add(replyMap.get(reply.getReplyId()));
             } else {
@@ -53,9 +64,7 @@ public class ReplyService {
                     parent.getChildren().add(replyMap.get(reply.getReplyId()));
                 }
             }
-
         }
         return root;
     }
-
 }

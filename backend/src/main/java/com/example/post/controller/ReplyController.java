@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,4 +74,54 @@ public class ReplyController {
         replyService.createReply(reply);
         return "redirect:/post/" + postId;
     }
+
+    //** 수정 폼 프래그먼트 반환 (GET) */
+    @GetMapping("/edit/{replyId}")
+    public String showEditForm(
+            @PathVariable Integer replyId,
+            Model model,
+            Principal principal
+    ) {
+        Reply reply = replyService.getReplyByReplyId(replyId);
+        UserInformation user = userService.getUserByUsername(principal.getName());
+        if (!reply.getProfileId().equals(user.getProfileId())) {
+            return "redirect:/post/" + reply.getPostId();
+        }
+        model.addAttribute("reply", reply);
+        return "edit :: editForm";
+    }
+
+    /** 실제 수정 처리 (POST) */
+    @PostMapping("/edit/{replyId}")
+    public String updateReply(
+            @PathVariable Integer replyId,
+            @RequestParam String content,
+            Principal principal
+    ) {
+        Reply reply = replyService.getReplyByReplyId(replyId);
+        UserInformation user = userService.getUserByUsername(principal.getName());
+        if (!reply.getProfileId().equals(user.getProfileId())) {
+            return "redirect:/post/" + reply.getPostId();
+        }
+        reply.setContent(content);
+        replyService.updateReply(replyId, reply);
+        return "redirect:/post/" + reply.getPostId();
+    }
+
+
+    @PostMapping("/delete/{replyId}")
+    public String deleteReply(@PathVariable Integer replyId, Principal principal) {
+        Reply reply = replyService.getReplyByReplyId(replyId);
+
+        // 권한 검사
+        UserInformation user = userService.getUserByUsername(principal.getName());
+        if (!reply.getProfileId().equals(user.getProfileId())) {
+            return "redirect:/post/" + reply.getPostId();
+        }
+
+        replyService.deleteReply(replyId);
+        return "redirect:/post/" + reply.getPostId();
+    }
+
+
 }
