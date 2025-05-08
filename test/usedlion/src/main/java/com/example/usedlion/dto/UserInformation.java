@@ -13,11 +13,11 @@ public class UserInformation {
     private String role;
     private LocalDateTime createdAt; // 타입 동일
     private String region; // Daum Postcode API
-    private boolean profileComplete;
+    private boolean is_profile_complete;
 
     // Getters and Setters
     public boolean isProfileComplete() {
-        return this.profileComplete;
+        return this.is_profile_complete;
     }
 
     public boolean hasRequiredProfileFields() {
@@ -26,7 +26,7 @@ public class UserInformation {
     }
 
     public void setProfileComplete(boolean profileComplete) {
-        this.profileComplete = profileComplete;
+        this.is_profile_complete = profileComplete;
     }
 
     public Long getId() {

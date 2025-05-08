@@ -34,6 +34,6 @@ public class UserInformation {
     private String role;
     private LocalDateTime created_at;
     private String region; // Daum Postcode API
-    private boolean profileComplete;
+    private boolean is_profile_complete;
 
 }
