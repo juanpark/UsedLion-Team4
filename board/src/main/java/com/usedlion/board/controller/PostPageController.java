@@ -50,16 +50,10 @@ public class PostPageController {
         return "view";
     }
 
-    // 🔹 글쓰기 폼
+    // 🔹 글쓰기 폼 (고정값 제거)
     @GetMapping("/posts/new")
     public String writePage(Model model) {
-        Post post = new Post();
-        post.setUserId(1);           // ✅ 외래키 기본값
-        post.setProfileId(1);        // ✅ 외래키 기본값
-        post.setLikes(0);            // 기본값
-        post.setView(0);             // 기본값
-        post.setComplete(false);     // 기본값
-
+        Post post = new Post(); // 고정값 없이 빈 객체만 전달
         model.addAttribute("post", post);
         model.addAttribute("statuses", SaleStatus.values());
         return "form";
@@ -79,7 +73,6 @@ public class PostPageController {
     public String submitPost(@ModelAttribute Post post,
                              @RequestParam(value = "fileUpload", required = false) MultipartFile file) throws IOException {
 
-        // ✅ 전달된 userId 로그 출력
         System.out.println("✅ userId from form: " + post.getUserId());
 
         if (file != null && !file.isEmpty()) {
@@ -110,6 +103,8 @@ public class PostPageController {
         return "redirect:/";
     }
 }
+
+
 
 
 
