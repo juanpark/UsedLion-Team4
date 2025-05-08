@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>게시판</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+<h1>📋 게시판</h1>
+
+<!-- 글 작성 -->
+<h3>새 글 작성</h3>
+<input type="text" id="titleInput" placeholder="제목"><br>
+<textarea id="contentInput" placeholder="내용"></textarea><br>
+<button onclick="createPost()">작성</button>
+
+<!-- 검색 -->
+<h3>게시글 검색</h3>
+<input type="text" id="searchInput" placeholder="검색어 입력">
+<button onclick="searchPosts()">검색</button>
+<button onclick="resetSearch()">되돌리기</button>
+
+<!-- 게시글 목록 -->
+<h3>📃 게시글 목록</h3>
+<div id="postList"></div>
+
+<script>
+function fetchPosts() {
+  axios.get("http://localhost:8080/posts")
+    .then(response => displayPosts(response.data))
+    .catch(error => console.error("목록 조회 실패:", error));
+}
+
+function displayPosts(posts) {
+  const postList = document.getElementById("postList");
+  postList.innerHTML = "";
+  if (posts.length === 0) {
+    postList.innerHTML = "<p>검색 결과가 없습니다.</p>";
+    return;
+  }
+  posts.forEach(post => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <h4>${post.title}</h4>
+      <p>${post.content}</p>
+      <p>👍 ${post.likes}</p>
+      <button onclick="likePost(${post.id})">추천</button>
+      <hr>
+    `;
+    postList.appendChild(div);
+  });
+}
+
+function createPost() {
+  const title = document.getElementById("titleInput").value;
+  const content = document.getElementById("contentInput").value;
+
+  axios.post("http://localhost:8080/posts", { title, content })
+    .then(() => {
+      document.getElementById("titleInput").value = "";
+      document.getElementById("contentInput").value = "";
+      fetchPosts();
+    })
+    .catch(error => console.error("글 작성 실패:", error));
+}
+
+function likePost(id) {
+  axios.post(`http://localhost:8080/posts/${id}/like`)
+    .then(() => fetchPosts())
+    .catch(error => console.error("추천 실패:", error));
+}
+
+function searchPosts() {
+  const keyword = document.getElementById("searchInput").value.trim();
+  if (!keyword) {
+    alert("검색어를 입력하세요.");
+    return;
+  }
+
+  axios.get("http://localhost:8080/posts/search", { params: { keyword } })
+    .then(response => displayPosts(response.data))
+    .catch(error => console.error("검색 실패:", error));
+}
+
+function resetSearch() {
+  document.getElementById("searchInput").value = "";
+  fetchPosts(); // 전체 글 다시 표시
+}
+
+// 초기 로딩 시 전체 글 표시
+fetchPosts();
+</script>
+
+</body>
+</html>
