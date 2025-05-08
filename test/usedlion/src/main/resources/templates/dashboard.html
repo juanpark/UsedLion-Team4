@@ -72,7 +72,7 @@
       .search-container {
         display: flex;
         align-items: center;
-        margin-bottom: 20px;
+        margin-bottom: 100px;
       }
 
       .search-container input[type="text"] {
@@ -168,6 +168,27 @@
       .report-none {
         background-color: #b6f6c5;
       }
+      #regionInput,
+      button {
+        width: 100%; /* 너비를 100%로 설정하여 동일한 크기 */
+        padding: 10px; /* 적절한 여백 */
+        font-size: 16px; /* 글자 크기 통일 */
+        box-sizing: border-box; /* 패딩을 포함한 크기 조정 */
+      }
+
+      /* 버튼에 스타일 추가 */
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
     </style>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -185,6 +206,18 @@
             const filterMenu = document.getElementById("filterMenu");
             filterMenu.style.display = "none";
           });
+        });
+        document.addEventListener("click", function (event) {
+          const filterMenu = document.getElementById("filterMenu");
+          const filterToggle = document.getElementById("filterToggle");
+
+          // 필터 메뉴나 토글 버튼 외부를 클릭하면 필터 메뉴 닫기
+          if (
+            !filterMenu.contains(event.target) &&
+            event.target !== filterToggle
+          ) {
+            filterMenu.style.display = "none";
+          }
         });
       });
       function search() {
@@ -301,6 +334,7 @@
               type="text"
               id="regionInput"
               placeholder="지역명을 입력하세요"
+              width="80%"
             />
             <button onclick="applyRegion()">적용</button>
           </div>
@@ -316,24 +350,25 @@
         <button onclick="clearPage()" class="post-condition-button">
           초기화
         </button>
-      </div>
-      <div th:if="${filter}">
-        <p>
-          검색 조건:
-          <span th:text="|${filter} 이 ${condition}을 포함하는 결과|"></span>
-        </p>
-      </div>
 
-      <div id="filterMenu">
-        <label>
-          <input type="radio" name="filter" value="title" checked /> 제목
-        </label>
-        <label>
-          <input type="radio" name="filter" value="username" /> 닉네임
-        </label>
-        <label>
-          <input type="radio" name="filter" value="content" /> 내용
-        </label>
+        <div th:if="${filter}">
+          <p>
+            검색 조건:
+            <span th:text="|${filter} 이 ${condition}을 포함하는 결과|"></span>
+          </p>
+        </div>
+
+        <div id="filterMenu">
+          <label>
+            <input type="radio" name="filter" value="title" checked /> 제목
+          </label>
+          <label>
+            <input type="radio" name="filter" value="username" /> 닉네임
+          </label>
+          <label>
+            <input type="radio" name="filter" value="content" /> 내용
+          </label>
+        </div>
       </div>
       <div class="table-container">
         <table id="postTable">
