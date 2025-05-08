@@ -11,16 +11,19 @@ import com.example.usedlion.dto.PostDetailDto;
 import com.example.usedlion.dto.PostImage;
 import com.example.usedlion.entity.Image;
 import com.example.usedlion.entity.Post;
+import com.example.usedlion.entity.Report;
 import com.example.usedlion.repository.PostRepository;
 
 @Service
 public class PostService {
     private final PostRepository postRepository;
     private final ImageService imageService;
+    private final ReportService reportService;
 
-    public PostService(PostRepository postRepository, ImageService imageService) {
+    public PostService(PostRepository postRepository, ImageService imageService, ReportService reportService) {
         this.imageService = imageService;
         this.postRepository = postRepository;
+        this.reportService = reportService;
     }
 
     public Post createPost(Post post) {
@@ -92,6 +95,7 @@ public class PostService {
     public List<PostImage> makePostImage(List<PostDetailDto> posts) {
         List<PostImage> postImages = new ArrayList<>();
         for (PostDetailDto post : posts) {
+            List<Report> reports = reportService.getByUserId(post.getUserId());
             List<Image> images = imageService.getImagesByPostId(post.getPostId());
             String base64File = null;
             if (images != null && !images.isEmpty()) {
@@ -99,7 +103,7 @@ public class PostService {
                 byte[] imageBytes = image.getFile();
                 base64File = Base64.getEncoder().encodeToString(imageBytes);
             }
-            PostImage pImage = new PostImage(post, base64File);
+            PostImage pImage = new PostImage(post, base64File, reports.size());
             postImages.add(pImage);
         }
         return postImages;

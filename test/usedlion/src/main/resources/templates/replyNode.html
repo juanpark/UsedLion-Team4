@@ -181,20 +181,28 @@
 
     <!-- 3) 신고 모달 -->
     <div 
-    th:id="'reportModal-' + ${node.reply.id}" class="modal">
+    th:id="'reportModal-' + ${node.reply.id}" class="my-modal">
       <form th:action="@{/report/{postId}/{userId}(
                       postId=${postId},
                       userId=${node.reply.userId})}"
             method="post">
-        <h3>신고 사유 입력</h3>
-        <textarea name="reason" rows="4" cols="40" required></textarea><br><br>
-        <button type="submit">제출</button>
-        <button type="button"
-                th:onclick="'closeModal(\'reportModal-' + ${node.reply.id} + '\')'">
-          취소
-        </button>
-      </form>
-    </div>
+            <h5 class="mb-3">🚨 신고 사유 입력</h5>
+            <textarea
+              name="reason"
+              rows="4"
+              class="form-control mb-3"
+              placeholder="신고 내용을 입력해주세요."
+              required
+            ></textarea>
+            <div class="d-flex justify-content-end gap-2">
+              <button type="submit" class="btn btn-danger">제출</button>
+              <button type="button" th:onclick="'closeModal(\'reportModal-' + ${node.reply.id} + '\')'">
+                취소
+              </button>
+            </div>
+          </form>
+        </div>
+…
 
     <!-- 4) 수정 모달 -->
     <div th:id="'editModal-' + ${node.reply.id}" class="my-modal">

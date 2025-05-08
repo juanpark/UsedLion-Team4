@@ -19,7 +19,7 @@ public class ReportService {
         reportRepository.save(report);
     }
 
-    public List<Report> getByuserId(Integer userId) {
+    public List<Report> getByUserId(Integer userId) {
 
         return reportRepository.findByTargetId(userId);
     }

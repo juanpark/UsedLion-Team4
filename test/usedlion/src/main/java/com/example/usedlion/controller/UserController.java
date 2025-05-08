@@ -59,7 +59,7 @@ public class UserController {
 
         List<PostDetailDto> posts = postService.searchPosts(null, user.getUsername(), null, null);
         List<PostImage> postImages = postService.makePostImage(posts);
-        List<Report> reports = reportService.getByuserId(userId);
+        List<Report> reports = reportService.getByUserId(userId);
         List<ReplyDetailDto> replies = replyService.getReplyByUserId(userId);
         List<UserPostLike> likes = userPostLikeService.getUserPostLikeByUserId(userId);
 
