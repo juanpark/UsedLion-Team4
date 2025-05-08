@@ -46,8 +46,8 @@ public class ReplyService {
 
     public void recursiveDelete(Reply reply) {
         Integer postId = reply.getPostId();
-        Integer replyId = reply.getReplyId();
-        replyRepository.deleteById(reply.getReplyId());
+        Integer replyId = reply.getId();
+        replyRepository.deleteById(reply.getId());
         List<Reply> replies = replyRepository.getReplyByPostIdAndRef(postId, replyId);
         for (Reply r : replies) {
             recursiveDelete(r);
@@ -60,15 +60,15 @@ public class ReplyService {
         List<ReplyTree> root = new ArrayList<>();
 
         for (ReplyDetailDto reply : list) {
-            replyMap.put(reply.getReplyId(), new ReplyTree(reply));
+            replyMap.put(reply.getId(), new ReplyTree(reply));
         }
         for (ReplyDetailDto reply : list) {
             if (reply.getRef() == 0) {
-                root.add(replyMap.get(reply.getReplyId()));
+                root.add(replyMap.get(reply.getId()));
             } else {
                 ReplyTree parent = replyMap.get(reply.getRef());
                 if (parent != null) {
-                    parent.getChildren().add(replyMap.get(reply.getReplyId()));
+                    parent.getChildren().add(replyMap.get(reply.getId()));
                 }
             }
         }

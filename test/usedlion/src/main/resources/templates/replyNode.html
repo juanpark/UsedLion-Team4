@@ -24,15 +24,15 @@
       </strong>
       <span th:text="${#temporals.format(node.reply.created_at,'yyyy-MM-dd HH:mm')}">날짜</span>
       <button th:if="${node.reply.email != #authentication.principal.username}" type="button"
-      th:onclick="'openReportModal(' + ${node.reply.replyId} + ')'"
+      th:onclick="'openReportModal(' + ${node.reply.id} + ')'"
       >신고</button>
       <sec:authorize access="isAuthenticated()">
         <th:block th:if="${#authentication.principal.username == node.reply.email}">
           <button type="button"
-                  th:onclick="'openEditModal(' + ${node.reply.replyId} + ')'"
+                  th:onclick="'openEditModal(' + ${node.reply.id} + ')'"
           >수정</button>
           <button type="button"
-                  th:onclick="'openDeleteModal(' + ${node.reply.replyId} + ')'"
+                  th:onclick="'openDeleteModal(' + ${node.reply.id} + ')'"
           >삭제</button>
         </th:block>
       </sec:authorize>
@@ -45,7 +45,7 @@
 
     <!-- 3) 신고 모달 -->
     <div 
-    th:id="'reportModal-' + ${node.reply.replyId}" class="modal">
+    th:id="'reportModal-' + ${node.reply.id}" class="modal">
       <form th:action="@{/report/{postId}/{userId}(
                       postId=${postId},
                       userId=${node.reply.userId})}"
@@ -54,16 +54,16 @@
         <textarea name="reason" rows="4" cols="40" required></textarea><br><br>
         <button type="submit">제출</button>
         <button type="button"
-                th:onclick="'closeModal(\'reportModal-' + ${node.reply.replyId} + '\')'">
+                th:onclick="'closeModal(\'reportModal-' + ${node.reply.id} + '\')'">
           취소
         </button>
       </form>
     </div>
 
     <!-- 4) 수정 모달 -->
-    <div th:id="'editModal-' + ${node.reply.replyId}" class="modal">
+    <div th:id="'editModal-' + ${node.reply.id}" class="modal">
       <form th:action="@{/reply/edit/{replyId}(
-                      replyId=${node.reply.replyId})}"
+                      replyId=${node.reply.id})}"
             method="post">
         <h3>댓글 수정</h3>
         <textarea name="content"
@@ -72,21 +72,21 @@
                   required></textarea><br><br>
         <button type="submit">수정완료</button>
         <button type="button"
-                th:onclick="'closeModal(\'editModal-' + ${node.reply.replyId} + '\')'">
+                th:onclick="'closeModal(\'editModal-' + ${node.reply.id} + '\')'">
           취소
         </button>
       </form>
     </div>
 
     <!-- 5) 삭제 모달 -->
-    <div th:id="'deleteModal-' + ${node.reply.replyId}" class="modal">
+    <div th:id="'deleteModal-' + ${node.reply.id}" class="modal">
       <p>정말 이 댓글을 삭제하시겠습니까?</p>
       <form th:action="@{/reply/delete/{replyId}(
-                      replyId=${node.reply.replyId})}"
+                      replyId=${node.reply.id})}"
             method="post">
         <button type="submit">삭제</button>
         <button type="button"
-                th:onclick="'closeModal(\'deleteModal-' + ${node.reply.replyId} + '\')'">
+                th:onclick="'closeModal(\'deleteModal-' + ${node.reply.id} + '\')'">
           취소
         </button>
       </form>
@@ -95,7 +95,7 @@
     <!-- 6) 대댓글 입력 폼 -->
     <form th:action="@{/reply/{postId}/{parentReplyId}(
                     postId=${postId},
-                    parentReplyId=${node.reply.replyId})}"
+                    parentReplyId=${node.reply.id})}"
           method="post">
       <input type="text" name="content" placeholder="대댓글을 입력하세요" required />
       <button type="submit">답글</button>

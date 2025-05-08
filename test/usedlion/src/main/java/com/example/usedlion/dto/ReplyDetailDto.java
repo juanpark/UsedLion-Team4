@@ -14,7 +14,7 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReplyDetailDto {
 
-    private Integer replyId;
+    private Integer id;
     private Integer userId;
     private Integer ref;
     private Integer level;
