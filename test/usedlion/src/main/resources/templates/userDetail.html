@@ -1,205 +1,230 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>유저 정보</title>
-    <button onclick="history.back()">이전으로</button>
-  </head>
-  <style>
-      .table-container {
-    max-height: 300px; /* 원하는 높이로 설정 */
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    padding: 10px;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  th, td {
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-  }
-    .modal {
-      position: fixed;
-      z-index: 100;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.4);
-    }
-
-    .modal-content {
-      background-color: #fefefe;
-      margin: 15% auto;
-      padding: 20px;
-      width: 50%;
-      border-radius: 8px;
-    }
-
-    .close {
-      float: right;
-      font-size: 20px;
-      cursor: pointer;
-    }
-  </style>
-  <script>
-    function openReportModal() {
-      document.getElementById("reportModal").style.display = "block";
-    }
-
-    function closeReportModal() {
-      document.getElementById("reportModal").style.display = "none";
-    }
-
-    // 클릭 외 영역 클릭 시 닫기
-    window.onclick = function (event) {
-      const modal = document.getElementById("reportModal");
-      if (event.target == modal) {
-        modal.style.display = "none";
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f8fafc;
+        font-family: "Segoe UI", sans-serif;
       }
-    };
-  </script>
+      .container {
+        max-width: 900px;
+        margin: 2rem auto;
+      }
+      .section {
+        margin-top: 2rem;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      .modal-content {
+        background-color: white;
+        margin: 10% auto;
+        padding: 20px;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      .close {
+        float: right;
+        font-size: 1.25rem;
+        cursor: pointer;
+      }
+      .table-container {
+        max-height: 300px;
+        overflow-y: auto;
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        padding: 1rem;
+      }
+      table {
+        width: 100%;
+      }
+    </style>
+    <script>
+      function openReportModal() {
+        document.getElementById("reportModal").style.display = "block";
+      }
+      function closeReportModal() {
+        document.getElementById("reportModal").style.display = "none";
+      }
+      window.onclick = function (event) {
+        const modal = document.getElementById("reportModal");
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      };
+    </script>
+  </head>
+
   <body>
-    <h1>
-      <small>닉네임: <span th:text="${user.nickname}"></span></small>
-      <small>이메일: <span th:text="${user.email}">작성자</span></small>
-      <p>
-        신고:
-        <a href="javascript:void(0);" onclick="openReportModal()">
-          [[${reportCount}]]회
-        </a>
-      </p>
-      <div id="reportModal" class="modal" style="display: none">
+    <div class="container">
+      <h2 class="mb-3">👤 유저 정보</h2>
+      <div class="bg-white p-3 rounded shadow-sm">
+        <p>닉네임: <strong th:text="${user.nickname}"></strong></p>
+        <p>이메일: <strong th:text="${user.email}">작성자</strong></p>
+        <p>
+          신고:
+          <a
+            href="javascript:void(0);"
+            onclick="openReportModal()"
+            class="text-danger fw-semibold"
+          >
+            [[${reportCount}]]회
+          </a>
+        </p>
+      </div>
+
+      <!-- 신고 모달 -->
+      <div id="reportModal" class="modal">
         <div class="modal-content">
           <span class="close" onclick="closeReportModal()">&times;</span>
-          <h5>신고 내역</h5>
-          <ul>
+          <h5>🚨 신고 내역</h5>
+          <ul class="mt-3">
             <li th:each="report : ${reports}">
-              사유 : <span th:text="${report.content}">신고 사유</span>
+              사유: <span th:text="${report.content}">신고 사유</span>
             </li>
           </ul>
         </div>
       </div>
-    </h1>
 
-    
-    <p>
-      <h2 th:text="'좋아요한 게시글 수: ' + ${likeCount} + '개'">게시글 수: 0개</h2>
-    </p>
+      <!-- 좋아요한 게시글 -->
+      <div class="section">
+        <h4 th:text="'👍 좋아요한 게시글 수: ' + ${likeCount} + '개'"></h4>
+        <div class="table-container mt-2">
+          <table class="table table-striped">
+            <thead class="table-light">
+              <tr>
+                <th>제목</th>
+                <th>조회수</th>
+                <th>작성 날짜</th>
+                <th>썸네일</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="like : ${likes}">
+                <td>
+                  <a
+                    th:href="@{/post/{postId}(postId=${like.post.postId})}"
+                    th:text="${like.post.title}"
+                    class="text-decoration-none text-dark"
+                    >제목</a
+                  >
+                </td>
+                <td th:text="${like.post.view}">조회수</td>
+                <td
+                  th:text="${#temporals.format(like.post.created_at, 'yyyy-MM-dd HH:mm')}"
+                >
+                  날짜
+                </td>
+                <td>
+                  <img
+                    th:if="${like.img != null}"
+                    th:src="'data:image/jpeg;base64,' + ${like.img}"
+                    style="max-height: 60px"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-    <h2>좋아요 목록</h2>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>제목</th>
-            <th>조회수</th>
-            <th>작성 날짜</th>
-            <th> 썸네일</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="like : ${likes}">
-            <td>
-              <a th:href="@{/post/{postId}(postId=${like.post.postId})}"
-                 th:text="${like.post.title}"
-                 style="color: #333; text-decoration: none">
-                 게시글 제목
-              </a>
-            </td>
-            <td th:text="${like.post.view}">조회수</td>
-            <td th:text="${#temporals.format(like.post.created_at, 'yyyy-MM-dd HH:mm')}">
-              작성일
-            </td>
-            <td>
-              <img
-                th:if="${like.img != null}"
-                th:src="'data:image/jpeg;base64,' + ${like.img}"
-                alt="게시글 이미지"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- 작성한 게시글 -->
+      <div class="section">
+        <h4 th:text="'📝 게시글 수: ' + ${postCount} + '개'"></h4>
+        <div class="table-container mt-2">
+          <table class="table table-striped">
+            <thead class="table-light">
+              <tr>
+                <th>제목</th>
+                <th>조회수</th>
+                <th>작성 날짜</th>
+                <th>썸네일</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="post : ${posts}">
+                <td>
+                  <a
+                    th:href="@{/post/{postId}(postId=${post.post.postId})}"
+                    th:text="${post.post.title}"
+                    class="text-decoration-none text-dark"
+                    >제목</a
+                  >
+                </td>
+                <td th:text="${post.post.view}">조회수</td>
+                <td
+                  th:text="${#temporals.format(post.post.created_at, 'yyyy-MM-dd HH:mm')}"
+                >
+                  날짜
+                </td>
+                <td>
+                  <img
+                    th:if="${post.img != null}"
+                    th:src="'data:image/jpeg;base64,' + ${post.img}"
+                    style="max-height: 60px"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 작성한 댓글 -->
+      <div class="section">
+        <h4 th:text="'💬 댓글 수: ' + ${replyCount} + '개'"></h4>
+        <div class="table-container mt-2">
+          <table class="table table-striped">
+            <thead class="table-light">
+              <tr>
+                <th>제목</th>
+                <th>내용</th>
+                <th>작성 날짜</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="reply : ${replies}">
+                <td>
+                  <a
+                    th:href="@{/post/{postId}(postId=${reply.postId})}"
+                    th:text="${reply.postTitle}"
+                    class="text-decoration-none text-dark"
+                    >제목</a
+                  >
+                </td>
+                <td th:text="${reply.content}">댓글 내용</td>
+                <td
+                  th:text="${#temporals.format(reply.created_at, 'yyyy-MM-dd HH:mm')}"
+                >
+                  날짜
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="mt-4 text-end">
+        <button class="btn btn-secondary" onclick="history.back()">
+          ⬅ 이전으로
+        </button>
+      </div>
     </div>
-
-    
-    <p>
-      <h2 th:text="'게시글 수: ' + ${postCount} + '개'">게시글 수: 0개</h2>
-    </p>
-    <h2>게시글 목록</h2>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>제목</th>
-            <th>조회수</th>
-            <th>작성 날짜</th>
-            <th> 썸네일</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="post : ${posts}">
-            <td>
-              <a th:href="@{/post/{postId}(postId=${post.post.postId})}"
-                 th:text="${post.post.title}"
-                 style="color: #333; text-decoration: none">
-                 게시글 제목
-              </a>
-            </td>
-            <td th:text="${post.post.view}">조회수</td>
-            <td th:text="${#temporals.format(post.post.created_at, 'yyyy-MM-dd HH:mm')}">
-              작성일
-            </td>
-            <td>
-              <img
-                th:if="${post.img != null}"
-                th:src="'data:image/jpeg;base64,' + ${post.img}"
-                alt="게시글 이미지"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    
-    <p>
-      <h2 th:text="'댓글 수: ' + ${replyCount} + '개'">댓글 수: 0개</h2>
-    </p>
-    <h2>댓글 목록</h2>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>제목</th>
-            <th>내용</th>
-            <th>작성 날짜</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="reply : ${replies}">
-            <td>
-              <a th:href="@{/post/{postId}(postId=${reply.postId})}"
-                 th:text="${reply.postTitle}"
-                 style="color: #333; text-decoration: none">
-                 게시글 제목
-              </a>
-            </td>
-            <td th:text="${reply.content}">댓글 내용</td>
-            <td th:text="${#temporals.format(reply.created_at, 'yyyy-MM-dd HH:mm')}">
-              작성 날짜
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
   </body>
 </html>
