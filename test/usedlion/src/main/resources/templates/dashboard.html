@@ -12,22 +12,59 @@
   <body layout:fragment="content">
     <style>
       .table-container {
-        height: 1000px;
+        max-height: 800px;
+        position: relative;
         overflow-y: auto;
-        border: 1px solid #ccc;
-        padding: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        background-color: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
       }
 
       table {
+        position: sticky;
         width: 100%;
         border-collapse: collapse;
+        border-spacing: 0;
+        font-family: "Segoe UI", sans-serif;
+        background-color: white;
       }
 
-      th,
-      td {
-        padding: 8px;
-        border-bottom: 1px solid #ddd;
+      th {
+        position: sticky;
+        top: 0;
+        background-color: #f1f3f5;
+        color: #333;
         text-align: left;
+        padding: 12px 16px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border-bottom: 2px solid #dee2e6;
+        z-index: 2;
+      }
+      thead {
+        position: sticky;
+      }
+
+      td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #eee;
+        font-size: 0.9rem;
+        color: #555;
+      }
+
+      tr:hover {
+        background-color: #f9f9f9;
+        transition: background-color 0.2s ease-in-out;
+      }
+
+      th:first-child,
+      td:first-child {
+        border-top-left-radius: 8px;
+      }
+      th:last-child,
+      td:last-child {
+        border-top-right-radius: 8px;
       }
       body {
         font-family: Arial, sans-serif;
@@ -51,16 +88,6 @@
         border: none;
         border-radius: 4px;
         cursor: pointer;
-      }
-
-      #filterToggle {
-        background-color: #007bff;
-        color: white;
-        padding: 8px 16px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        margin-bottom: 20px;
       }
 
       #filterMenu {
@@ -249,27 +276,11 @@
       </div>
       <h2 class="mb-4">📦 중고로사자 광장</h2>
 
-      <a th:href="@{/post/create}">
-        <button
-          style="
-            padding: 8px 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-          "
-        >
-          게시글 작성
-        </button>
-      </a>
-
       <h2>게시판 글 목록</h2>
       <div class="search-container">
-        <button id="regionButton" style="margin-right: 10px" type="button">
+        <button id="regionButton" class="post-condition-button" type="button">
           지역
         </button>
-
         <div id="regionModal" class="modal" style="display: none">
           <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -287,10 +298,12 @@
           id="hiddenRegion"
           th:value="${region != null ? region : ''}"
         />
-        <button id="filterToggle" style="margin-right: 10px">조건</button>
+        <button id="filterToggle" class="post-condition-button">조건</button>
         <input type="text" id="searchInput" placeholder="검색어 입력" />
-        <button onclick="search()">검색</button>
-        <button onclick="clearPage()" style="margin-left: 10px">초기화</button>
+        <button onclick="search()" class="post-condition-button">검색</button>
+        <button onclick="clearPage()" class="post-condition-button">
+          초기화
+        </button>
       </div>
       <div th:if="${filter}">
         <p>
@@ -326,6 +339,8 @@
               <th onclick="sortTable(3)">
                 작성일 <span class="sort-icon" id="icon-3">↕</span>
               </th>
+              <th>지역 <span></span></th>
+              <th>썸네일 <span></span></th>
             </tr>
           </thead>
           <tbody>
@@ -354,6 +369,8 @@
                 >
                   작성일
                 </td>
+                <td th:text="${post.post.region}">지역</td>
+
                 <td>
                   <img
                     th:if="${post.img != null}"

@@ -25,4 +25,5 @@ public class PostDetailDto {
     private SaleStatus status;
     private String email;
     private String username;
+    private String region;
 }
