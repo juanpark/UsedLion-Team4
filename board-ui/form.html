@@ -61,7 +61,6 @@
       const form = document.getElementById("postForm");
 
       if (postId) {
-        // 수정 모드일 경우 기존 데이터 불러오기
         fetch(`http://localhost:8080/posts/${postId}`)
           .then((res) => res.json())
           .then((data) => {
@@ -74,58 +73,41 @@
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const title = document.getElementById("title").value;
-        const content = document.getElementById("content").value;
-        const price = parseInt(document.getElementById("price").value);
+        const formData = new FormData();
+        formData.append("userId", 1);
+        formData.append("profileId", 1);
+        formData.append("view", postId ? 0 : 0);
+        formData.append("title", document.getElementById("title").value);
+        formData.append("content", document.getElementById("content").value);
+        formData.append("price", document.getElementById("price").value);
+        formData.append("status", "ONSALE");
+
         const fileInput = document.getElementById("file");
-        const file = fileInput.files[0];
+        if (fileInput.files.length > 0) {
+          formData.append("file", fileInput.files[0]);
+        }
 
-        const sendRequest = async (fileBytes) => {
-          const postData = {
-            userId: 1,
-            profileId: 1,
-            view: postId ? undefined : 0,
-            file: fileBytes,
-            title,
-            price,
-            content,
-            status: "ONSALE",
-          };
+        const method = postId ? "PUT" : "POST";
+        const url = postId
+          ? `http://localhost:8080/posts/${postId}`
+          : `http://localhost:8080/posts`;
 
-          const method = postId ? "PUT" : "POST";
-          const url = postId
-            ? `http://localhost:8080/posts/${postId}`
-            : `http://localhost:8080/posts`;
+        try {
+          const res = await fetch(url, {
+            method,
+            body: formData,
+          });
 
-          try {
-            const res = await fetch(url, {
-              method,
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(postData),
-            });
-
-            if (res.ok) {
-              alert(postId ? "글이 수정되었습니다." : "글이 등록되었습니다.");
-              window.location.href = "index.html";
-            } else {
-              alert("처리 실패");
-            }
-          } catch (err) {
-            alert("에러 발생: " + err);
+          if (res.ok) {
+            alert(postId ? "글이 수정되었습니다." : "글이 등록되었습니다.");
+            window.location.href = "index.html";
+          } else {
+            const errorText = await res.text();
+            console.error("서버 응답 실패:", errorText);
+            alert("처리 실패");
           }
-        };
-
-        if (file) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const fileBytes = new Uint8Array(reader.result);
-            sendRequest(fileBytes);
-          };
-          reader.readAsArrayBuffer(file);
-        } else {
-          sendRequest(null);
+        } catch (err) {
+          alert("에러 발생: " + err);
         }
       });
     </script>
