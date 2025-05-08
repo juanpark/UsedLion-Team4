@@ -11,11 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +27,7 @@ import com.example.post.entity.Post;
 import com.example.post.service.ImageService;
 import com.example.post.service.PostService;
 import com.example.post.service.ReplyService;
+import com.example.post.service.UserPostLikeService;
 import com.example.post.service.UserService;
 
 @Controller
@@ -40,9 +38,12 @@ public class PostController {
     private final ReplyService replyService;
     private final UserService userService;
     private final ImageService imageService;
+    private final UserPostLikeService userPostLikeService;
 
     public PostController(PostService postService, ReplyService replyService, UserService userService,
-            ImageService imageService) {
+            ImageService imageService,
+            UserPostLikeService userPostLikeService) {
+        this.userPostLikeService = userPostLikeService;
         this.userService = userService;
         this.replyService = replyService;
         this.postService = postService;
@@ -87,22 +88,25 @@ public class PostController {
         List<ReplyDetailDto> replyDto = replyService.getReplyByPostId(postId);
         List<ReplyTree> replyTree = replyService.MakeTree(replyDto);
         List<Image> postImages = imageService.getImagesByPostId(postId);
+
         List<String> imageList = new ArrayList<>();
         for (Image image : postImages) {
             String base64Image = Base64.getEncoder().encodeToString(image.getFile());
             imageList.add(base64Image);
         }
-        String base64File = postDetailDto.getFile() != null
-                ? Base64.getEncoder().encodeToString(postDetailDto.getFile())
-                : null;
+
+        boolean isLiked = userPostLikeService.isPostLiked(postId,
+                userService.getUserByUsername(principal.getName()).getUserId());
+
+        model.addAttribute("isLiked", isLiked);
 
         int viewCount = postDetailDto.getView();
         postDetailDto.setView(viewCount + 1);
         Post post = postService.getPostByPostId(postId);
-        post.setView(postDetailDto.getView() + 1);
+        post.setView(postDetailDto.getView());
         postService.update(postId, post);
-        model.addAttribute("post", postDetailDto);
 
+        model.addAttribute("post", postDetailDto);
         model.addAttribute("replyTree", replyTree);
         model.addAttribute("imageList", imageList);
         model.addAttribute("currentUsername", principal.getName());
@@ -188,9 +192,6 @@ public class PostController {
             String base64Image = Base64.getEncoder().encodeToString(image.getFile());
             imageList.add(base64Image);
         }
-        String base64File = postDetailDto.getFile() != null
-                ? Base64.getEncoder().encodeToString(postDetailDto.getFile())
-                : null;
 
         model.addAttribute("post", postDetailDto);
         model.addAttribute("imageList", imageList);

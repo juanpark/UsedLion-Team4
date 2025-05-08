@@ -44,8 +44,15 @@ public class ReplyService {
         replyRepository.save(existing);
     }
 
-    public void deleteReply(Integer replyId) {
-        replyRepository.deleteById(replyId);
+    public void recursiveDelete(Reply reply) {
+        Integer postId = reply.getPostId();
+        Integer replyId = reply.getReplyId();
+        replyRepository.deleteById(reply.getReplyId());
+        List<Reply> replies = replyRepository.getReplyByPostIdAndRef(postId, replyId);
+        for (Reply r : replies) {
+            recursiveDelete(r);
+        }
+
     }
 
     public List<ReplyTree> MakeTree(List<ReplyDetailDto> list) {

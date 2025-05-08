@@ -91,6 +91,47 @@
 
     
     <p>
+      <h2 th:text="'좋아요한 게시글 수: ' + ${likeCount} + '개'">게시글 수: 0개</h2>
+    </p>
+
+    <h2>좋아요 목록</h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>제목</th>
+            <th>조회수</th>
+            <th>작성 날짜</th>
+            <th> 썸네일</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="like : ${likes}">
+            <td>
+              <a th:href="@{/post/{postId}(postId=${like.post.postId})}"
+                 th:text="${like.post.title}"
+                 style="color: #333; text-decoration: none">
+                 게시글 제목
+              </a>
+            </td>
+            <td th:text="${like.post.view}">조회수</td>
+            <td th:text="${#temporals.format(like.post.created_at, 'yyyy-MM-dd HH:mm')}">
+              작성일
+            </td>
+            <td>
+              <img
+                th:if="${like.img != null}"
+                th:src="'data:image/jpeg;base64,' + ${like.img}"
+                alt="게시글 이미지"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    
+    <p>
       <h2 th:text="'게시글 수: ' + ${postCount} + '개'">게시글 수: 0개</h2>
     </p>
     <h2>게시글 목록</h2>

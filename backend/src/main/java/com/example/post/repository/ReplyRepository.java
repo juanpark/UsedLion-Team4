@@ -15,4 +15,6 @@ public interface ReplyRepository extends JpaRepository<Reply, Integer> {
 
     @Query("SELECT new com.example.post.dto.ReplyDetailDto(r.replyId,r.userId,r.ref,r.level,r.postId,r.content,r.created_at,u.username,p.title) FROM Reply r JOIN UserInformation u on u.userId = r.userId JOIN Post p on p.postId = r.postId  WHERE r.userId = ?1 order by r.start,r.replyId,r.created_at")
     public List<ReplyDetailDto> getReplyByUserId(Integer userId);
+
+    public List<Reply> getReplyByPostIdAndRef(Integer postId, Integer ref);
 }

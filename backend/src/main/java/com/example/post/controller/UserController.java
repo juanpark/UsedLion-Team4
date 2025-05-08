@@ -1,6 +1,7 @@
 package com.example.post.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,10 +21,12 @@ import com.example.post.dto.PostImage;
 import com.example.post.dto.ReplyDetailDto;
 import com.example.post.entity.Report;
 import com.example.post.entity.UserInformation;
+import com.example.post.entity.UserPostLike;
 import com.example.post.service.ImageService;
 import com.example.post.service.PostService;
 import com.example.post.service.ReplyService;
 import com.example.post.service.ReportService;
+import com.example.post.service.UserPostLikeService;
 import com.example.post.service.UserService;
 
 @Controller
@@ -35,15 +38,18 @@ public class UserController {
     private final ReportService reportService;
     private final ReplyService replyService;
     private final ImageService imageService;
+    private final UserPostLikeService userPostLikeService;
 
     public UserController(PostService postService, UserService userService,
-            ReportService reportService, ReplyService replyService, ImageService imageService) {
+            ReportService reportService,
+            ReplyService replyService, ImageService imageService, UserPostLikeService userPostLikeService) {
         this.replyService = replyService;
         this.reportService = reportService;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.postService = postService;
         this.userService = userService;
         this.imageService = imageService;
+        this.userPostLikeService = userPostLikeService;
     }
 
     @GetMapping("/")
@@ -99,6 +105,15 @@ public class UserController {
         List<PostImage> postImages = postService.makePostImage(posts);
         List<Report> reports = reportService.getByuserId(userId);
         List<ReplyDetailDto> replies = replyService.getReplyByUserId(userId);
+        List<UserPostLike> likes = userPostLikeService.getUserPostLikeByUserId(userId);
+
+        List<PostDetailDto> likePosts = new ArrayList<>();
+
+        for (UserPostLike like : likes) {
+            PostDetailDto post = postService.getPostDetailByPostId(like.getPostId());
+            likePosts.add(post);
+        }
+        List<PostImage> likePostImages = postService.makePostImage(likePosts);
 
         model.addAttribute("user", user);
         model.addAttribute("posts", postImages);
@@ -107,6 +122,8 @@ public class UserController {
         model.addAttribute("reports", reports);
         model.addAttribute("replies", replies);
         model.addAttribute("replyCount", replies.size());
+        model.addAttribute("likes", likePostImages);
+        model.addAttribute("likeCount", likePosts.size()); // Updated to use likePosts.size()
         return "userDetail";
     }
 

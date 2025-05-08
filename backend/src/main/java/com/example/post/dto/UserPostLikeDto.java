@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 
-public class LikePostDto {
+public class UserPostLikeDto {
 
     private Integer id;
     private Integer userId;

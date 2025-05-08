@@ -116,7 +116,7 @@ public class ReplyController {
             return "redirect:/post/" + reply.getPostId();
         }
 
-        replyService.deleteReply(replyId);
+        replyService.recursiveDelete(reply);
         return "redirect:/post/" + reply.getPostId();
     }
 

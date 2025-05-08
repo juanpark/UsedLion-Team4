@@ -10,10 +10,11 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 
-public class LikePost {
+public class UserPostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer likeId;
+    @Column(name = "id")
+    private Integer id;
     private Integer userId;
     private Integer postId;
 }
