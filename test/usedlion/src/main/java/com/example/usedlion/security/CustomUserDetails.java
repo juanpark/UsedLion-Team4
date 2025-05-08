@@ -15,6 +15,10 @@ public class CustomUserDetails implements UserDetails {
         this.user = user;
     }
 
+    public UserInformation getUser() {
+        return user;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() { //
         return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
@@ -29,7 +33,5 @@ public class CustomUserDetails implements UserDetails {
     @Override public boolean isCredentialsNonExpired() { return true; }
     @Override public boolean isEnabled() { return true; }
 
-    public UserInformation getUser() {
-        return user;
-    }
+
 }

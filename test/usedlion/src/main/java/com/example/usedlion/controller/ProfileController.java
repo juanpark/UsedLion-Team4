@@ -2,7 +2,9 @@ package com.example.usedlion.controller;
 
 import com.example.usedlion.dto.UserInformation;
 import com.example.usedlion.repository.UserInformationRepository;
+import com.example.usedlion.security.CustomUserDetails;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -65,5 +67,36 @@ public class ProfileController {
         session.removeAttribute("pendingUser");
 
         return "redirect:/dashboard?signupSuccess=true";
+    }
+
+    @PostMapping("/update-profile")
+    public String updateProfile(@RequestParam String nickname,
+                                @RequestParam String region,
+                                Authentication auth,
+                                Model model) {
+        String email = null;
+
+        if (auth.getPrincipal() instanceof CustomUserDetails customUserDetails) {
+            email = customUserDetails.getUsername();
+        } else if (auth.getPrincipal() instanceof OAuth2User oauth) {
+            email = oauth.getAttribute("email");
+        }
+
+        if (email == null) {
+            model.addAttribute("error", "사용자 인증 정보를 불러오지 못했습니다.");
+            return "error";  // you can also render a generic error page
+        }
+
+        UserInformation user = userRepo.findByEmail(email);
+        if (user == null) {
+            model.addAttribute("error", "사용자 정보를 찾을 수 없습니다.");
+            return "error";
+        }
+
+        user.setNickname(nickname);
+        user.setRegion(region);
+        userRepo.updateProfileFields(user);
+
+        return "redirect:/profile?success=true";
     }
 }

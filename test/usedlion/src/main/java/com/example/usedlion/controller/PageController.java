@@ -2,6 +2,8 @@ package com.example.usedlion.controller;
 
 import com.example.usedlion.security.CustomUserDetails;
 import com.example.usedlion.dto.Post;
+import com.example.usedlion.dto.UserInformation;
+import com.example.usedlion.repository.UserInformationRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,12 @@ import java.util.List;
 
 @Controller // @RestController와는 별도!
 public class PageController {
+
+    private final UserInformationRepository userRepo;
+
+    public PageController(UserInformationRepository userRepo) {
+        this.userRepo = userRepo;
+    }
 
     @GetMapping("/")
     public String landing(Model model){
@@ -57,6 +65,31 @@ public class PageController {
         model.addAttribute("posts", posts);
 
         return "dashboard";
+    }
+
+    @GetMapping("/profile")
+    public String profilePage(Authentication authentication, Model model) {
+        if (authentication == null) {
+            return "redirect:/";
+        }
+
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof CustomUserDetails) {
+            CustomUserDetails cud = (CustomUserDetails) principal;
+            model.addAttribute("user", cud.getUser());
+        } else if (principal instanceof OAuth2User) {
+            OAuth2User oauthUser = (OAuth2User) principal;
+            // you must fetch the DB user by email
+            String email = oauthUser.getAttribute("email");
+            UserInformation user = userRepo.findByEmail(email);
+            if (user == null) return "redirect:/"; // fail-safe
+            model.addAttribute("user", user);
+        } else {
+            return "redirect:/";
+        }
+
+        return "profile";
     }
 
     @GetMapping("/logout")
