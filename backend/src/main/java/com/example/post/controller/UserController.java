@@ -91,14 +91,14 @@ public class UserController {
         return "hello";
     }
 
-    @GetMapping("/user/{profileId}")
-    public String getUser(@PathVariable Integer profileId, Model model, Principal principal) {
-        UserInformation user = userService.getUserById(profileId);
+    @GetMapping("/user/{userId}")
+    public String getUser(@PathVariable Integer userId, Model model, Principal principal) {
+        UserInformation user = userService.getUserById(userId);
 
         List<PostDetailDto> posts = postService.searchPosts(null, user.getUsername(), null);
         List<PostImage> postImages = postService.makePostImage(posts);
-        List<Report> reports = reportService.getByProfileId(profileId);
-        List<ReplyDetailDto> replies = replyService.getReplyByProfileId(profileId);
+        List<Report> reports = reportService.getByuserId(userId);
+        List<ReplyDetailDto> replies = replyService.getReplyByUserId(userId);
 
         model.addAttribute("user", user);
         model.addAttribute("posts", postImages);
@@ -115,16 +115,16 @@ public class UserController {
         return "login";
     }
 
-    @PostMapping("/report/{postId}/{profileId}")
-    public String reportPost(@PathVariable Integer postId, @PathVariable Integer profileId,
+    @PostMapping("/report/{postId}/{userId}")
+    public String reportPost(@PathVariable Integer postId, @PathVariable Integer userId,
             @RequestParam("reason") String reason,
             Principal principal,
             RedirectAttributes redirectAttributes) {
         String username = principal.getName();
         UserInformation user = userService.getUserByUsername(username);
         Report report = new Report();
-        report.setProfileId(user.getProfileId());
-        report.setTargetId(profileId);
+        report.setUserId(user.getUserId());
+        report.setTargetId(userId);
         report.setContent(reason);
 
         reportService.createReport(report);

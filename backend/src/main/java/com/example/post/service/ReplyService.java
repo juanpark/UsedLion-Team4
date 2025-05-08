@@ -24,8 +24,8 @@ public class ReplyService {
         return replyRepository.getReplyByPostId(postId);
     }
 
-    public List<ReplyDetailDto> getReplyByProfileId(Integer profileId) {
-        return replyRepository.getReplyByProfileId(profileId);
+    public List<ReplyDetailDto> getReplyByUserId(Integer userId) {
+        return replyRepository.getReplyByUserId(userId);
     }
 
     public Reply getReplyByReplyId(Integer replyId) {

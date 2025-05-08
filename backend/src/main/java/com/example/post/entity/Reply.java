@@ -15,9 +15,10 @@ public class Reply {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer replyId;
     private Integer start;
-    private Integer profileId;
+    private Integer userId;
     private Integer ref;
     private Integer level;
     private Integer postId;

@@ -19,9 +19,9 @@ public class ReportService {
         reportRepository.save(report);
     }
 
-    public List<Report> getByProfileId(Integer profileId) {
+    public List<Report> getByuserId(Integer userId) {
 
-        return reportRepository.findByTargetId(profileId);
+        return reportRepository.findByTargetId(userId);
     }
 
 }

@@ -17,6 +17,7 @@ import lombok.Setter;
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer imageId;
     private Integer postId;
     @Lob

@@ -6,5 +6,5 @@ import com.example.post.entity.LikePost;
 
 public interface PostLikeRepository extends JpaRepository<LikePost, Integer> {
 
-    void deleteByProfileIdAndPostId(Integer profileId, Integer postId);
+    void deleteByUserIdAndPostId(Integer userId, Integer postId);
 }

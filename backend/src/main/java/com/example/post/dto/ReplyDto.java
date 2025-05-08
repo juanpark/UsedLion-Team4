@@ -16,7 +16,7 @@ public class ReplyDto {
 
     private Integer replyId;
     private Integer Start;
-    private Integer profileId;
+    private Integer userId;
     private Integer ref;
     private Integer level;
     private Integer postId;

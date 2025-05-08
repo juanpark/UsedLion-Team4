@@ -16,8 +16,9 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer postId;
-    private Integer profileId;
+    private Integer userId;
     private Integer view;
     @Lob
     private byte[] file;

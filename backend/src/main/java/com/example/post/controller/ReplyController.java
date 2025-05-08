@@ -43,7 +43,7 @@ public class ReplyController {
         reply.setContent(content);
         reply.setPostId(postId);
         UserInformation user = userService.getUserByUsername(principal.getName());
-        reply.setProfileId(user.getProfileId());
+        reply.setUserId(user.getUserId());
         reply.setRef(0);
         reply.setLevel(0);
         reply.setDate(LocalDateTime.now());
@@ -65,7 +65,7 @@ public class ReplyController {
         reply.setContent(content);
         reply.setPostId(postId);
         UserInformation user = userService.getUserByUsername(principal.getName());
-        reply.setProfileId(user.getProfileId());
+        reply.setUserId(user.getUserId());
         reply.setRef(target.getReplyId());
         reply.setLevel(target.getLevel() + 1);
         reply.setStart(target.getStart());
@@ -75,16 +75,15 @@ public class ReplyController {
         return "redirect:/post/" + postId;
     }
 
-    //** 수정 폼 프래그먼트 반환 (GET) */
+    // ** 수정 폼 프래그먼트 반환 (GET) */
     @GetMapping("/edit/{replyId}")
     public String showEditForm(
             @PathVariable Integer replyId,
             Model model,
-            Principal principal
-    ) {
+            Principal principal) {
         Reply reply = replyService.getReplyByReplyId(replyId);
         UserInformation user = userService.getUserByUsername(principal.getName());
-        if (!reply.getProfileId().equals(user.getProfileId())) {
+        if (!reply.getUserId().equals(user.getUserId())) {
             return "redirect:/post/" + reply.getPostId();
         }
         model.addAttribute("reply", reply);
@@ -96,11 +95,10 @@ public class ReplyController {
     public String updateReply(
             @PathVariable Integer replyId,
             @RequestParam String content,
-            Principal principal
-    ) {
+            Principal principal) {
         Reply reply = replyService.getReplyByReplyId(replyId);
         UserInformation user = userService.getUserByUsername(principal.getName());
-        if (!reply.getProfileId().equals(user.getProfileId())) {
+        if (!reply.getUserId().equals(user.getUserId())) {
             return "redirect:/post/" + reply.getPostId();
         }
         reply.setContent(content);
@@ -108,20 +106,18 @@ public class ReplyController {
         return "redirect:/post/" + reply.getPostId();
     }
 
-
     @PostMapping("/delete/{replyId}")
     public String deleteReply(@PathVariable Integer replyId, Principal principal) {
         Reply reply = replyService.getReplyByReplyId(replyId);
 
         // 권한 검사
         UserInformation user = userService.getUserByUsername(principal.getName());
-        if (!reply.getProfileId().equals(user.getProfileId())) {
+        if (!reply.getUserId().equals(user.getUserId())) {
             return "redirect:/post/" + reply.getPostId();
         }
 
         replyService.deleteReply(replyId);
         return "redirect:/post/" + reply.getPostId();
     }
-
 
 }

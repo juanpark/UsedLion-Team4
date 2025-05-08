@@ -49,7 +49,7 @@
         조회수: <span th:text="${post.view}">0</span><br />
         작성자:
         <a
-          th:href="@{/user/{profileId}(profileId=${post.profileId})}"
+          th:href="@{/user/{userId}(userId=${post.userId})}"
           th:text="${post.username}"
           >작성자</a
         ><br />
@@ -72,7 +72,7 @@
           <li th:style="'margin-left: ' + (${reply.level} * 20) + 'px;'">
             <strong>
               <a
-                th:href="@{/user/{profileId}(profileId=${reply.profileId})}"
+                th:href="@{/user/{userId}(userId=${reply.userId})}"
                 th:text="${reply.username}"
                 >작성자</a
               >

@@ -104,7 +104,7 @@ public class PostController {
         post.setStatus(status);
         post.setDate(LocalDateTime.now());
         post.setView(0);
-        post.setProfileId(userService.getUserByUsername(username).getProfileId()); // 사용자 정보에서 profileId 설정
+        post.setUserId(userService.getUserByUsername(username).getUserId()); // 사용자 정보에서 userId 설정
 
         postService.createPost(post);
         for (MultipartFile file : files) {

@@ -11,7 +11,7 @@ import lombok.*;
 public class LikePostDto {
 
     private Integer id;
-    private Integer profileId;
+    private Integer userId;
     private Integer postId;
 
 }

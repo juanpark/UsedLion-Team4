@@ -16,7 +16,7 @@ public class PostDto {
 
     private Integer id;
 
-    private Integer profileId;
+    private Integer userId;
     private Integer view;
     private byte[] file;
     private String title;

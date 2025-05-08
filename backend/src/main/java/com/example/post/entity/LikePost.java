@@ -14,6 +14,6 @@ public class LikePost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer likeId;
-    private Integer profileId;
+    private Integer userId;
     private Integer postId;
 }

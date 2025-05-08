@@ -27,8 +27,8 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public List<Post> getPostById(Integer profileId) {
-        return postRepository.findByProfileId(profileId);
+    public List<Post> getPostById(Integer userId) {
+        return postRepository.findByUserId(userId);
     }
 
     public Post getPostByPostId(Integer postId) {
@@ -59,8 +59,8 @@ public class PostService {
         if (post.getDate() != null) {
             existingPost.setDate(post.getDate());
         }
-        if (post.getProfileId() != null) {
-            existingPost.setProfileId(post.getProfileId());
+        if (post.getUserId() != null) {
+            existingPost.setUserId(post.getUserId());
         }
         return postRepository.save(existingPost);
     }
@@ -69,9 +69,9 @@ public class PostService {
         return postRepository.getAllPostDetail();
     }
 
-    public List<Post> getPostsByProfileId(Integer profileId) {
+    public List<Post> getPostsByUserId(Integer userId) {
         return postRepository.findAll().stream()
-                .filter(post -> post.getProfileId().equals(profileId))
+                .filter(post -> post.getUserId().equals(userId))
                 .collect(Collectors.toList());
     }
 

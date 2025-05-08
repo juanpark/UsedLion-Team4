@@ -7,7 +7,7 @@
     <!-- 1) 메타 정보 (헤더) -->
     <div class="reply-header" style="margin-bottom:4px;">
       <strong>
-        <a th:href="@{/user/{profileId}(profileId=${node.reply.profileId})}"
+        <a th:href="@{/user/{userId}(userId=${node.reply.userId})}"
            th:text="${node.reply.username}">작성자</a>
       </strong>
       <span th:text="${#temporals.format(node.reply.date,'yyyy-MM-dd HH:mm')}">날짜</span>
@@ -34,9 +34,9 @@
 
     <!-- 3) 신고 모달 -->
     <div th:id="'reportModal-' + ${node.reply.replyId}" class="modal">
-      <form th:action="@{/report/{postId}/{profileId}(
+      <form th:action="@{/report/{postId}/{userId}(
                       postId=${postId},
-                      profileId=${node.reply.profileId})}"
+                      userId=${node.reply.userId})}"
             method="post">
         <h3>신고 사유 입력</h3>
         <textarea name="reason" rows="4" cols="40" required></textarea><br><br>

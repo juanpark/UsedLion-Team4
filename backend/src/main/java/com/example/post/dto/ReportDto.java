@@ -17,7 +17,7 @@ import lombok.Setter;
 public class ReportDto {
 
     private Integer reportId;
-    private Integer profileId;
+    private Integer userId;
     private Integer targetId;
     private String content;
 
