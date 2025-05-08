@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
 
 <head>
     <title>중고로사자 광장</title>
@@ -7,6 +8,9 @@
 
 <body layout:fragment="content">
     <div class="container my-4">
+        <div th:if="${param.signupSuccess}" class="alert alert-success text-center mt-3">
+            🎉 회원가입이 완료되었습니다! 중고사자에 오신 것을 환영합니다.
+        </div>
         <h2 class="mb-4">📦 중고로사자 광장</h2>
 
         <div id="post-list" class="row row-cols-1 row-cols-md-3 g-4">
@@ -25,5 +29,6 @@
             </div>
         </div>
     </div>
+
 </body>
 </html>

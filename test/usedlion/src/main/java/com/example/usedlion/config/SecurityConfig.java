@@ -77,15 +77,15 @@ public class SecurityConfig {
                 )
 
                 // ③ Google OAuth2 로그인
-                .oauth2Login(oauth -> oauth
-                        // .loginPage("/") -> 구글 에러를 보려면 이 부분을 빼야 함.
-                        .userInfoEndpoint(userInfo ->
-                                userInfo.userService(oauth2UserService)
-                        )
-                        .successHandler(customOAuth2SuccessHandler)
-                )
+                .oauth2Login(oauth -> {
+                    System.out.println("✅ CustomOAuth2SuccessHandler is wired");
+                    oauth.userInfoEndpoint(userInfo ->
+                            userInfo.userService(oauth2UserService)
+                    ).successHandler(customOAuth2SuccessHandler);
+                })
                 .logout(logout -> logout.logoutSuccessUrl("/"));
 
+        System.out.println("✅ SecurityFilterChain: filterChain bean is being executed");
         return http.build();
     }
 

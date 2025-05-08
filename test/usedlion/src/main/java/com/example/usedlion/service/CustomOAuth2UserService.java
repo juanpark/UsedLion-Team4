@@ -35,7 +35,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setEmail(email);
             user.setPassword(null);           //비밀번호는 Null로
             user.setUsername(localPart);      //username @이전의 값으로 저장
-            user.setNickname(localPart);      //nickname @이전의 값으로 저장
+            user.setNickname(null);      //nickname @이전의 값으로 저장
             user.setProvider("google");
             user.setProviderId(oauthUser.getName());
             user.setRole("USER");

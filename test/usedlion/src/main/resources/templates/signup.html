@@ -30,6 +30,19 @@
 
             elementLayer.style.display = 'block';
         }
+
+        window.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+            form.addEventListener("submit", function (e) {
+                const regionInput = document.getElementById("region");
+                if (!regionInput.value.trim()) {
+                    e.preventDefault();
+                    alert("지역을 선택해주세요.");
+                    regionInput.focus();
+                }
+            });
+        });
+
     </script>
 </head>
 

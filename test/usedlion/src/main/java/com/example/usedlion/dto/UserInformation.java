@@ -21,6 +21,11 @@ public class UserInformation {
         return this.profileComplete;
     }
 
+    public boolean hasRequiredProfileFields() {
+        return nickname != null && !nickname.isBlank()
+                && region != null && !region.isBlank();
+    }
+
     public void setProfileComplete(boolean profileComplete) {
         this.profileComplete = profileComplete;
     }

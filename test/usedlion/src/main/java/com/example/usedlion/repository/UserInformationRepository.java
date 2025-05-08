@@ -31,6 +31,8 @@ public class UserInformationRepository {
                 u.setProviderId(rs.getString("provider_id"));
                 u.setRole(rs.getString("role"));
                 u.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                u.setRegion(rs.getString("region"));
+                u.setProfileComplete(rs.getBoolean("is_profile_complete"));
                 return u;
             }
             return null;

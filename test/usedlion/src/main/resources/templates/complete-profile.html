@@ -22,6 +22,17 @@
             }).embed(elementLayer);
             elementLayer.style.display = 'block';
         }
+        window.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+            form.addEventListener("submit", function (e) {
+                const regionInput = document.getElementById("region");
+                if (!regionInput.value.trim()) {
+                    e.preventDefault();
+                    alert("지역을 선택해주세요.");
+                    regionInput.focus();
+                }
+            });
+        });
     </script>
 </head>
 
@@ -53,9 +64,6 @@
             </div>
 
             <button type="submit" class="lion-button w-100 mt-3">확인</button>
-            <div th:if="${param.success}" class="alert alert-success mt-3 text-center" role="alert">
-                프로필이 성공적으로 저장되었습니다!
-            </div>
         </form>
     </div>
     </div>

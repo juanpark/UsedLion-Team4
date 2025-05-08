@@ -35,8 +35,10 @@ public class PageController {
         if (oidcUser != null) {
             name = oidcUser.getFullName();
         }
-        else if (oauth2User != null && oauth2User.getAttribute("name") != null) {
-            name = oauth2User.getAttribute("name");                             // OAuth2User에서 이름 꺼내기
+        else if (authentication != null
+                && authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails cud = (CustomUserDetails) authentication.getPrincipal();
+            name = cud.getUser().getNickname();
         }
         else if (authentication != null
                 && authentication.getPrincipal() instanceof UserDetails) {
@@ -72,7 +74,11 @@ public class PageController {
         String nickname = "Guest";
 
         // ① OAuth2 로그인 (구글) 사용자의 프로필 이름이 곧 nickname
-        if (oauth2User != null && oauth2User.getAttribute("name") != null) {
+        if (authentication != null
+                && authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails cud = (CustomUserDetails) authentication.getPrincipal();
+            nickname = cud.getUser().getNickname();
+        } else if (oauth2User != null && oauth2User.getAttribute("name") != null) {
             nickname = oauth2User.getAttribute("name");
         }
         // ② 로컬 로그인 사용자는 UserInformationRepository를 이용해 DB에서 nickname 조회
