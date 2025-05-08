@@ -17,6 +17,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    @Autowired
+    private com.example.usedlion.security.CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 //    @Autowired
 //    private CustomOAuth2UserService customOAuth2UserService;
 //    private final CustomUserDetailsService customUserDetailsService; //for login
@@ -58,7 +60,7 @@ public class SecurityConfig {
                 // 접근 허용 설정
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login","/signup", "/css/**", "/js/**", "/images/**"
-                                ,"/chat", "/static/**", "/ws/**","/topic/**").permitAll()
+                                ,"/chat", "/static/**", "/ws/**","/topic/**", "/complete-profile").permitAll()
                         //.requestMatchers("/chat").authenticated() // chat 인증된 사용자만 보이게
                         .anyRequest().authenticated()
                 )
@@ -76,11 +78,11 @@ public class SecurityConfig {
 
                 // ③ Google OAuth2 로그인
                 .oauth2Login(oauth -> oauth
-                        // .loginPage("/") -> 구글 에러를 보려면 이 부분을 빼야 함.  
+                        // .loginPage("/") -> 구글 에러를 보려면 이 부분을 빼야 함.
                         .userInfoEndpoint(userInfo ->
                                 userInfo.userService(oauth2UserService)
                         )
-                        .defaultSuccessUrl("/dashboard", true)
+                        .successHandler(customOAuth2SuccessHandler)
                 )
                 .logout(logout -> logout.logoutSuccessUrl("/"));
 

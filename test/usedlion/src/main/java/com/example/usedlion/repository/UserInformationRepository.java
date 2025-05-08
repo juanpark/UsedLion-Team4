@@ -56,4 +56,18 @@ public class UserInformationRepository {
                 u.getRegion()
         );
 }
+
+    public void updateProfileFields(UserInformation user) {
+        String sql = """
+            UPDATE user_information
+            SET nickname = ?, region = ?, is_profile_complete = ?
+            WHERE email = ?
+        """;
+        jdbc.update(sql,
+                user.getNickname(),
+                user.getRegion(),
+                user.isProfileComplete(),
+                user.getEmail()
+        );
+    }
 }
