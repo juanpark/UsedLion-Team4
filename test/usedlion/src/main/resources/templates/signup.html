@@ -10,12 +10,25 @@
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
         function execDaumPostcode() {
+            const elementLayer = document.getElementById('postcodeLayer');
+
             new daum.Postcode({
                 oncomplete: function(data) {
                     const region = data.sido + ' ' + data.sigungu;
+                    let fullAddress = data.address;
+                    if (data.buildingName !== '') {
+                        fullAddress += ' ' + data.buildingName;
+                    }
+
                     document.getElementById("region").value = region;
-                }
-            }).open();
+
+                    elementLayer.style.display = 'none';
+                },
+                width: '100%',
+                height: '100%'
+            }).embed(elementLayer);
+
+            elementLayer.style.display = 'block';
         }
     </script>
 </head>
@@ -49,10 +62,12 @@
                 <input type="text" th:field="*{nickname}" class="lion-input mb-3" placeholder="닉네임" required>
                 <div th:if="${#fields.hasErrors('nickname')}" class="text-danger mb-2" th:errors="*{nickname}"></div>
 
-                <div class="d-flex mb-3">
-                <input type="text" id="region" name="region" th:field="*{region}" class="lion-input w-75" placeholder="지역 (예: 서울특별시 강남구)" readonly required>
-                <button type="button" class="lion-button mt-2 w-25" onclick="execDaumPostcode()">찾기</button>
-                </div>
+
+                <input type="text" id="region" name="region" th:field="*{region}" class="lion-input mb-3" placeholder="지역 (예: 서울특별시 강남구)" onclick="execDaumPostcode()" readonly required>
+                <!--<input type="text" id="fullAddress" name="fullAddress" th:field="*{fullAddress}" class="lion-input mb-3" placeholder="도로명 주소" readonly required>-->
+                <div id="postcodeLayer" style="display:none;position:fixed;top:20%;left:50%;transform:translateX(-50%);z-index:1000;width:400px;height:500px;border:1px solid #ccc;background:#fff;"></div>
+
+
 
                 <button type="submit" class="lion-button w-100 mb-3">회원가입</button>
             </form>

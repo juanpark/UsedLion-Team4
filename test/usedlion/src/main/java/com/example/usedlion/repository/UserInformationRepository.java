@@ -41,8 +41,8 @@ public class UserInformationRepository {
     public void save(UserInformation u) {
         String sql = """
         INSERT INTO user_information
-        (email, password, username, nickname, provider, provider_id, role,created_at)
-        VALUES (?,?,?,?,?,?,?,?)
+        (email, password, username, nickname, provider, provider_id, role, created_at, region)
+        VALUES (?,?,?,?,?,?,?,?,?)
         """;; //G1: 테이블명 변경
         jdbc.update(sql,
                 u.getEmail(),
@@ -52,7 +52,8 @@ public class UserInformationRepository {
                 u.getProvider(),             // 'local'
                 u.getProviderId(),           // null
                 u.getRole(),                 // 'USER'
-                Timestamp.valueOf(u.getCreatedAt())  // 가입일시
+                Timestamp.valueOf(u.getCreatedAt()),  // 가입일시
+                u.getRegion()
         );
 }
 }

@@ -51,4 +51,5 @@ public class UserInformation {
     public void setRegion(String region) {
         this.region = region;
     }
+
 }
