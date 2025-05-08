@@ -18,7 +18,7 @@
             --text-color: #333;
             --text-secondary: #6c757d;
             --border-radius: 12px;
-            --box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+            --box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
             --transition: all 0.3s ease;
         }
 
@@ -131,8 +131,14 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .message-content {
@@ -140,7 +146,7 @@
             padding: 12px 15px;
             border-radius: 18px;
             position: relative;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         .message.sent {
@@ -170,7 +176,7 @@
 
         .message.sent .message-time {
             text-align: right;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .message.received .message-time {
@@ -215,6 +221,14 @@
             justify-content: center;
             transition: var(--transition);
         }
+        .profile-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%; /* 동그랗게 만들기 */
+            object-fit: cover;   /* 이미지 비율 유지하며 잘라내기 */
+            margin-right: 8px;
+            vertical-align: middle;
+        }
 
         .chat-input button:hover {
             background: var(--secondary-color);
@@ -235,7 +249,7 @@
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             margin-right: 10px;
             display: flex;
             align-items: center;
@@ -251,7 +265,7 @@
             margin: 12px 0;
             font-size: 12px;
             padding: 5px 12px;
-            background-color: rgba(0,0,0,0.03);
+            background-color: rgba(0, 0, 0, 0.03);
             border-radius: 16px;
             display: inline-block;
             margin-left: auto;
@@ -348,10 +362,14 @@
     </div>
 
     <div class="post-info">
-        <p><i class="fas fa-file-alt"></i> 게시글 ID: <span class="post-id" id="currentPostId" th:text="${postId}">-</span></p>
+        <p><i class="fas fa-file-alt"></i> 게시글 ID: <span class="post-id" id="currentPostId" th:text="${postId}">-</span>
+        </p>
+        <div class="chat-status">
+            접속자 수: <span id="connected-count">1</span>명
+        </div>
         <div class="user-id-input">
             <i class="fas fa-user"></i> 사용자 ID:
-            <input type="number" id="userId" value="1" min="1" />
+            <input type="number" id="userId" value="1" min="1"/>
         </div>
     </div>
 
@@ -361,8 +379,9 @@
             <i class="fas fa-spinner fa-spin"></i> 이전 메시지 불러오는 중...
         </div>
 
-        <div th:each="message : ${messages}" th:attr="data-message-id=${message.id}"
-             th:class="${message.userId == 1} ? 'message sent' : 'message received'">
+        <div th:each="message : ${messages}" th:attr="data-message-id=${message.id}">
+            <!--    추후에 message.userId를 로컬 스토리지에서 받아와 일치하는지 확인 해야 함         -->
+            th:class="${message.userId == 1} ? 'message sent' : 'message received'">
             <div class="message-content">
                 <div th:text="${message.content}">메시지 내용</div>
                 <div class="message-time" th:text="${#dates.format(message.createdAt, 'HH:mm')}">12:30</div>
@@ -371,7 +390,7 @@
     </div>
 
     <div class="chat-input" id="chatInputForm">
-        <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." autocomplete="off" required />
+        <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." autocomplete="off" required/>
         <button type="button" id="sendButton"><i class="fas fa-paper-plane"></i></button>
     </div>
 </div>
@@ -392,13 +411,12 @@
     const username = document.getElementById('username');
     const loadingPrevious = document.getElementById('loadingPrevious');
 
-    document.addEventListener('DOMContentLoaded', function() {
-        scrollToBottom();
+    document.addEventListener('DOMContentLoaded', function () {
         userIdInput.addEventListener('change', updateUserDisplay);
         updateUserDisplay();
         connectWebSocket();
         sendButton.addEventListener('click', sendMessage);
-        messageInput.addEventListener('keypress', function(e) {
+        messageInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') sendMessage();
         });
 
@@ -414,22 +432,51 @@
 
     function connectWebSocket() {
         if (ws !== null) ws.close();
-        ws = new WebSocket(`ws://localhost:8080/ws/chat/${postId}`);
+        ws = new WebSocket(`ws://192.168.45.58:8080/ws/chat/${postId}`);
 
-        ws.onopen = function() {
+        ws.onopen = function () {
             isConnected = true;
             updateConnectionStatus();
             addSystemMessage('채팅방에 연결되었습니다.');
             loadPreviousMessages();
+
         };
 
-        ws.onmessage = function(event) {
+        ws.onmessage = function (event) {
             try {
                 const message = JSON.parse(event.data);
-                switch(message.type) {
-                    case 'JOIN': addSystemMessage('새로운 사용자가 입장했습니다.'); break;
-                    case 'LEAVE': addSystemMessage('사용자가 퇴장했습니다.'); break;
-                    case 'MESSAGE': displayMessage(message); break;
+                switch (message.type) {
+                    case 'JOIN':
+                        addSystemMessage('새로운 사용자가 입장했습니다.');
+                        break;
+                    case 'LEAVE':
+                        addSystemMessage('사용자가 퇴장했습니다.');
+                        break;
+                    case 'STATUS':
+                        const countElement = document.getElementById("connected-count");
+                        countElement.textContent = message.count;
+                        break;
+                    case 'MESSAGE':
+                        displayMessage(message);
+                        break;
+                    case "EDITED":
+                        // 기존 메시지를 찾아서 내용 수정
+                        const msgElem = document.querySelector(`[data-message-id='${message.msgId}']`);
+                        if (msgElem) {
+                            const textDiv = msgElem.querySelector(".message-text");
+                            if (textDiv) {
+                                textDiv.textContent = message.content;
+                            }
+                        }
+                        break;
+                    case "DELETED":
+                        // 메시지 삭제
+                        const deleteMsgElem = document.querySelector(`[data-message-id='${message.msgId}']`);
+                        if (deleteMsgElem) {
+                            deleteMsgElem.remove(); // DOM에서 해당 메시지 삭제
+                            console.log(`메시지 ${message.msgId}가 삭제되었습니다.`);
+                        }
+                        break;
                     default:
                         if (message.error) addSystemMessage('오류: ' + message.error);
                         else displayMessage(message);
@@ -458,11 +505,15 @@
         const userId = parseInt(userIdInput.value);
         if (content && isConnected) {
             const messageObj = {
-                postId, userId, content, timestamp: new Date().toISOString()
+                type: "MESSAGE",
+                postId,
+                userId,
+                content,
+                timestamp: new Date().toISOString()
             };
             ws.send(JSON.stringify(messageObj));
             messageInput.value = '';
-            displayMessage({ userId, content, timestamp: new Date() }, true);
+            // displayMessage({ userId, content, timestamp: new Date() }, true);
             messageInput.focus();
         } else if (!isConnected) {
             addSystemMessage('연결이 끊어졌습니다. 재연결 중...');
@@ -472,20 +523,102 @@
 
     function displayMessage(message, isFromCurrentUser = false, insertAtTop = false) {
         const userId = parseInt(userIdInput.value);
-        const isMine = isFromCurrentUser || message.userId === userId;
+        const isMine = isFromCurrentUser || Number(message.userId) === Number(userId);
+
         const messageDiv = document.createElement('div');
         messageDiv.className = isMine ? 'message sent' : 'message received';
-        if (message.id) {
-            messageDiv.setAttribute('data-message-id', message.id);
+
+        // msgId를 HTML 요소에 저장!
+        if (message.msgId) {
+            messageDiv.setAttribute('data-message-id', message.msgId);
         }
+
         const time = new Date(message.timestamp || message.createdAt || new Date());
         const formattedTime = formatTime(time);
+
+        // 메시지 내용 및 시간 표시
         messageDiv.innerHTML = `
-            <div class="message-content">
-                <div>${message.content}</div>
-                <div class="message-time">${formattedTime}</div>
-            </div>
-        `;
+   <div class="message-header">
+    ${message.userId !== 1 ? `
+        <img class="profile-img" src="/default-profile.png" alt="프로필" />
+        <h4>닉네임</h4>
+    ` : ``}
+</div>
+<div class="message-content">
+    <div class="message-text">${message.content}</div>
+    <div class="message-time">${formattedTime}</div>
+    ${message.userId === 1 ? // 추후에 currentUserId로 바꿔야 함
+            `<div class="delete-icon" title="삭제">
+            <i class="fas fa-trash-alt"></i> <!-- Font Awesome 아이콘 사용 -->
+        </div>` : ``}
+</div>
+`;
+
+// 휴지통 클릭 이벤트 처리
+        const deleteIcon = messageDiv.querySelector(".delete-icon");
+        if (deleteIcon) {
+            deleteIcon.addEventListener("click", () => {
+                const confirmDelete = confirm("정말로 이 메시지를 삭제하시겠습니까?");
+                if (confirmDelete) {
+                    // 서버로 삭제 요청을 보내는 로직 추가
+                    ws.send(JSON.stringify({
+                        type: 'DELETE',
+                        msgId: message.msgId
+                    }));
+
+                }
+            });
+        }
+
+
+        let longClickTimer;
+        // 내가 보낸 메시지라면 수정 이벤트 추가
+        if (isMine && message.msgId) {
+            messageDiv.addEventListener('mousedown', (event) => {
+                if (event.button === 0) { // 왼쪽 마우스 버튼 클릭일 때
+                    longClickTimer = setTimeout(() => {
+                        const newContent = prompt('수정할 메시지를 입력하세요:', message.content);
+                        if (newContent && newContent !== message.content) {
+                            message.content = newContent;
+                            ws.send(JSON.stringify({
+                                type: 'EDIT',
+                                msgId: message.msgId,
+                                content: newContent
+                            }));
+                        }
+                    }, 1000); // 1초 (1000ms)
+
+                }
+            });
+            messageDiv.addEventListener('mouseup', () => {
+                // 마우스를 떼면 타이머 초기화
+                clearTimeout(longClickTimer);
+            });
+
+            messageDiv.addEventListener('mouseleave', () => {
+                // 마우스가 벗어나면 타이머 초기화
+                clearTimeout(longClickTimer);
+            });
+
+            messageDiv.addEventListener('touchstart', (event) => {
+                if (event.button === 0) { // 왼쪽 마우스 버튼 클릭일 때
+                    longClickTimer = setTimeout(() => {
+                        const newContent = prompt('수정할 메시지를 입력하세요:', message.content);
+                        if (newContent && newContent !== message.content) {
+                            ws.send(JSON.stringify({
+                                type: 'EDIT',
+                                msgId: message.msgId,
+                                content: newContent
+                            }));
+                        }
+                    }, 1000); // 1초 (1000ms)
+
+                }
+            });
+        }
+
+
+        // 메시지 위치 삽입
         if (insertAtTop) {
             chatMessages.insertBefore(messageDiv, chatMessages.firstChild);
         } else {
@@ -494,35 +627,78 @@
         }
     }
 
-    function loadPreviousMessages() {
-            fetch(`/chat/${postId}/history`)
-                .then(response => response.json())
-                .then(messages => {
-                    if (messages && messages.length > 0) {
-                        // 메시지 순서를 역순으로 가져와서 화면에 추가
-                        messages.reverse().forEach(msg => {
-                            displayMessage(msg, false, true);  // 여기서 메시지 하나씩 추가
-                        });
-
-                        // 새로운 가장 오래된 메시지 ID 설정
-                        earliestMessageId = messages[0].id;
-
-                    } else {
-                        addSystemMessage('더 이상 표시할 메시지가 없습니다.');
-                    }
-                })
-                .catch(error => {
-                    console.error('이전 메시지 로딩 중 오류 발생:', error);
-                    addSystemMessage('메시지 로딩 중 오류가 발생했습니다.');
-                })
-                .finally(() => {
-                    isLoadingPrevious = false;
-                    loadingPrevious.style.display = 'none';
-                });
+    chatMessages.addEventListener('scroll', () => {
+        if (chatMessages.scrollTop === 0 && !isLoadingPrevious) {
+            infinityScroll();
         }
+    });
 
+    let currentPage =2;
+    // 무한 스크롤
+    function infinityScroll() {
+        if (currentPage < 1) return;
+        isLoadingPrevious = true;
+        loadingPrevious.style.display = 'block';
+        const previousScrollHeight = chatMessages.scrollHeight;
 
-        function addSystemMessage(text) {
+        fetch(`/chat/${postId}/page?page=${currentPage}&size=10`)
+            .then(response => response.json())
+            .then(messages => {
+                if (messages.content && messages.content.length > 0) {
+                    messages.content.forEach(msg => {
+                        displayMessage(msg, false, true);
+                    });
+
+                    // 가장 오래된 메시지 ID 저장
+                    earliestMessageId = messages.content[0].id;
+                    currentPage++; // 다음 호출 시 더 이전 페이지로
+
+                    const newScrollHeight = chatMessages.scrollHeight;
+                    chatMessages.scrollTop += (newScrollHeight - previousScrollHeight);
+                } else {
+                    addSystemMessage('더 이상 표시할 메시지가 없습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('이전 메시지 로딩 중 오류 발생:', error);
+                addSystemMessage('메시지 로딩 중 오류가 발생했습니다.');
+            })
+            .finally(() => {
+                isLoadingPrevious = false;
+                loadingPrevious.style.display = 'none';
+            });
+    }
+    //초기 메세지 셋팅
+    function loadPreviousMessages() {
+
+        fetch(`/chat/${postId}/page?page=1&size=10`)
+            .then(response => response.json())
+            .then(messages => {
+                if (messages.content && messages.content.length > 0) {
+                    // 메시지 순서대로 가져와서 화면에 추가
+                    messages.content.forEach(msg => {
+                        displayMessage(msg, false, true);  // 여기서 메시지 하나씩 추가
+                    });
+
+                    // 새로운 가장 오래된 메시지 ID 설정
+                    earliestMessageId = messages.content[0].id;
+
+                } else {
+                    addSystemMessage('더 이상 표시할 메시지가 없습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('이전 메시지 로딩 중 오류 발생:', error);
+                addSystemMessage('메시지 로딩 중 오류가 발생했습니다.');
+            })
+            .finally(() => {
+                isLoadingPrevious = false;
+                loadingPrevious.style.display = 'none';
+                scrollToBottom();
+            });
+    }
+
+    function addSystemMessage(text) {
         const container = document.createElement('div');
         container.className = 'system-message-container';
         const systemMessage = document.createElement('div');
@@ -530,7 +706,6 @@
         systemMessage.textContent = text;
         container.appendChild(systemMessage);
         chatMessages.appendChild(container);
-        scrollToBottom();
     }
 
     function formatTime(date) {

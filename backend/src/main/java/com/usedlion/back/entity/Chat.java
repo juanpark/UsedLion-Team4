@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
 
     private Integer postId;
 
@@ -31,7 +31,7 @@ public class Chat {
 
     public void setContent(String content) {this.content = content;}
 
-    public int getMsgId() {return Id;}
+    public int getMsgId() {return id;}
 
     public int getPostId() {return postId;}
 

@@ -1,6 +1,6 @@
 package com.usedlion.back.config;
 
-import com.usedlion.back.service.ChatService;
+import com.usedlion.back.service.ChatServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -11,12 +11,12 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketConfigurer {
-    private final ChatService chatService;
+    private final ChatServiceImpl chatService;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(chatService, "/ws/chat/{post_id}")
-                .setAllowedOriginPatterns("*");
+                .setAllowedOriginPatterns("**");
     }
 
 }
