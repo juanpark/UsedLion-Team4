@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS user_post_like;
 DROP TABLE IF EXISTS reply;
 DROP TABLE IF EXISTS user_transaction;
 DROP TABLE IF EXISTS report;
+DROP TABLE IF EXISTS image;
 DROP TABLE IF EXISTS post;
 DROP TABLE IF EXISTS profile;          
 DROP TABLE IF EXISTS cities;
@@ -147,6 +148,12 @@ CREATE TABLE user_transaction (
     KEY fk_transaction_post   (post_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+
+-- 2.10. image
+create table image (image_id int primary key auto_increment, post_id int, file blob);
+
+
+
 /* =======================================================
    3. FOREIGN KEY CONSTRAINTS
    ======================================================= */
@@ -204,3 +211,6 @@ ALTER TABLE user_transaction
   FOREIGN KEY (buyer_id)  REFERENCES user_information(id),
   ADD CONSTRAINT fk_transaction_post
   FOREIGN KEY (post_id)   REFERENCES post(id);
+
+-- image
+alter table image add constraint fk_image_post foreign key (post_id) references post(id);
