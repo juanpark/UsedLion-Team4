@@ -33,6 +33,14 @@
                 }
             });
         });
+
+        // Hide postcode box if user clicks outside of it
+        window.addEventListener("click", function (e) {
+            const layer = document.getElementById("postcodeLayer");
+            if (!layer.contains(e.target) && e.target.id !== "region") {
+                layer.style.display = "none";
+            }
+        });
     </script>
 </head>
 
