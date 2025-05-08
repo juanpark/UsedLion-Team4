@@ -13,6 +13,7 @@ public class UserInformation {
     private String providerId;
     private String role;
     private LocalDateTime createdAt;   // 타입 동일
+    private String region; // Daum Postcode API
 
     // Getters and Setters
 
@@ -42,4 +43,12 @@ public class UserInformation {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
 }
