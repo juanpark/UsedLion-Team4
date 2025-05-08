@@ -26,16 +26,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest req) {
         OAuth2User oauthUser = super.loadUser(req);
-        String email = oauthUser.getAttribute("email");              // 이메일 받기
-        String localPart = email.substring(0, email.indexOf("@"));          // 이메일에서 @ 이전의 값을 localPart에 저장
+        String email = oauthUser.getAttribute("email"); // 이메일 받기
+        String localPart = email.substring(0, email.indexOf("@")); // 이메일에서 @ 이전의 값을 localPart에 저장
 
         UserInformation user = userRepo.findByEmail(email);
         if (user == null) {
             user = new UserInformation();
             user.setEmail(email);
-            user.setPassword(null);           //비밀번호는 Null로
-            user.setUsername(localPart);      //username @이전의 값으로 저장
-            user.setNickname(null);      //nickname @이전의 값으로 저장
+            user.setPassword(null); // 비밀번호는 Null로
+            user.setUsername(localPart); // username @이전의 값으로 저장
+            user.setNickname(null); // nickname @이전의 값으로 저장
             user.setProvider("google");
             user.setProviderId(oauthUser.getName());
             user.setRole("USER");
@@ -43,16 +43,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userRepo.save(user);
         }
 
-        else if (!"google".equals(user.getProvider())) {  // 기존 사용자 검사 -> provicder가 local이면
+        else if (!"google".equals(user.getProvider())) { // 기존 사용자 검사 -> provicder가 local이면
             throw new OAuth2AuthenticationException(
                     new OAuth2Error("invalid_provider"),
-                    "이미 일반 계정으로 가입된 이메일입니다. 이메일/비밀번호로 로그인하세요."
-            );
+                    "이미 일반 계정으로 가입된 이메일입니다. 이메일/비밀번호로 로그인하세요.");
         }
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole())),
                 oauthUser.getAttributes(),
-                "email"
-        );
+                "email");
     }
 }

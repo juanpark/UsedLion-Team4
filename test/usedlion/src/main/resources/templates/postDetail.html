@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>게시글 상세</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        line-height: 1.6;
+        background-color: #f9f9f9;
+      }
+      .post-container {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        max-height: 1000px;
+
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .reply-container {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        max-height: 600px;
+        overflow-y: auto;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .post-title {
+        font-size: 28px;
+        margin-bottom: 10px;
+      }
+      .post-meta {
+        color: #777;
+        margin-bottom: 20px;
+      }
+      .post-content {
+        white-space: pre-wrap;
+        font-size: 16px;
+      }
+      a {
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #007bff;
+      }
+      /* 모달 백드롭 */
+      #modalBackdrop {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+      /* 모달 공통 스타일 */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #ccc;
+        z-index: 1000;
+      }
+    </style>
+
+    <!-- 내용 50글자마다 줄바꿈 (원본) -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const contentElement = document.getElementById("postContent");
+        let content = contentElement.innerText;
+        let formattedContent = "";
+        const lineLength = 50;
+        for (let i = 0; i < content.length; i += lineLength) {
+          formattedContent += content.substring(i, i + lineLength) + "<br>";
+        }
+        contentElement.innerHTML = formattedContent;
+      });
+    </script>
+
+    <!-- 모달 제어 스크립트 -->
+    <script>
+      function openReportModal(id) {
+        document.getElementById("reportModal-" + id).style.display = "block";
+        document.getElementById("modalBackdrop").style.display = "block";
+      }
+      function openEditModal(id) {
+        document.getElementById("editModal-" + id).style.display = "block";
+        document.getElementById("modalBackdrop").style.display = "block";
+      }
+      function openDeleteModal(id) {
+        document.getElementById("deleteModal-" + id).style.display = "block";
+        document.getElementById("modalBackdrop").style.display = "block";
+      }
+      function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+        document.getElementById("modalBackdrop").style.display = "none";
+      }
+    </script>
+  </head>
+
+  <body>
+    <!-- 모달 백드롭 (전역) -->
+    <div id="modalBackdrop"></div>
+
+    <div>
+      <button
+        onclick="location.href='/dashboard'"
+        style="padding: 5px 10px; font-size: 14px"
+      >
+        ← 목록으로
+      </button>
+    </div>
+
+    <div class="post-container">
+      <span class="post-title" th:text="${post.title}">제목</span>
+
+      <div class="post-meta">
+        조회수: <span th:text="${post.view}">0</span><br />
+        작성자:
+        <a
+          th:href="@{/user/{userId}(userId=${post.userId})}"
+          th:text="${post.username}"
+          >작성자</a
+        >
+        <div th:if="${currentUsername != post.username}">
+          <button type="button" onclick="openReportModal('post')">
+            신고하기
+          </button>
+          <!-- 추천 버튼 넣을 예정  -->
+          <form
+            th:action="${isLiked} ? @{/post/unlike/{postId}(postId=${post.postId})} : @{/post/like/{postId}(postId=${post.postId})}"
+            method="post"
+          >
+          <button type="submit" th:text="${isLiked ? '좋아요 취소' : '👍 좋아요'}">
+          </form>
+        </div>
+
+        <div th:if="${currentUsername == post.username}">
+          <a th:href="@{/post/edit/{postId}(postId=${post.postId})}">
+            <button type="button">✏️ 수정</button>
+          </a>
+
+          <form
+            th:action="@{/post/delete/{id}(id=${post.postId})}"
+            method="post"
+            onsubmit="return confirm('정말 삭제하시겠습니까?')"
+          >
+            <input type="hidden" name="_method" value="delete" />
+            <button type="submit">🗑️ 삭제하기</button>
+          </form>
+        </div>
+        <!-- 게시글 신고 모달 -->
+        <div id="reportModal-post" class="modal">
+          <form
+            th:action="@{/report/{postId}/{userId}(postId=${post.postId}, userId=${post.userId})}"
+            method="post"
+          >
+            <h3>신고 사유 입력</h3>
+            <textarea
+              name="reason"
+              rows="4"
+              cols="40"
+              placeholder="내용"
+              required
+            ></textarea
+            ><br /><br />
+            <button type="submit">제출</button>
+            <button type="button" onclick="closeModal('reportModal-post')">
+              취소
+            </button>
+          </form>
+        </div>
+
+        작성일:
+        <span
+          th:text="${#temporals.format(post.created_at, 'yyyy-MM-dd HH:mm')}"
+          >날짜</span
+        >
+      </div>
+
+      <div class="post-content">
+        <p th:text="${post.content}" id="postContent"></p>
+      </div>
+      <div th:if="${imageList != null}">
+        <div th:each="img : ${imageList}">
+          <img
+            th:src="'data:image/jpeg;base64,' + ${img}"
+            alt="이미지"
+            style="max-width: 200px; max-height: 200px"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="reply-container">
+      <h2>댓글</h2>
+      <ul>
+        <th:block th:each="node : ${replyTree}">
+          <div
+            th:replace="~{replyNode :: reply(${node}, 0, ${post.postId},${post.userId})}"
+          ></div>
+        </th:block>
+      </ul>
+    </div>
+
+    <form th:action="@{/reply/{postId}(postId=${post.postId})}" method="POST">
+      <input
+        type="text"
+        name="content"
+        placeholder="댓글을 입력하세요"
+        required
+      />
+      <input type="hidden" name="postId" th:value="${post.postId}" />
+      <button type="submit">댓글 작성</button>
+    </form>
+  </body>
+</html>

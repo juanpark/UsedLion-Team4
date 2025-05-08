@@ -1,18 +1,17 @@
 package com.example.usedlion.dto;
 
-
-import java.time.LocalDateTime;               // ★ import 추가
+import java.time.LocalDateTime; // ★ import 추가
 
 public class UserInformation {
-    private Long   id;
+    private Long id;
     private String email;
     private String password;
-    private String username;     // name → username
-    private String nickname;     // ★ new
+    private String username; // name → username
+    private String nickname; // ★ new
     private String provider;
     private String providerId;
     private String role;
-    private LocalDateTime createdAt;   // 타입 동일
+    private LocalDateTime createdAt; // 타입 동일
     private String region; // Daum Postcode API
     private boolean profileComplete;
 
@@ -30,33 +29,77 @@ public class UserInformation {
         this.profileComplete = profileComplete;
     }
 
+    public Long getId() {
+        return id;
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getEmail() {
+        return email;
+    }
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getPassword() {
+        return password;
+    }
 
-    public String getNickname() { return nickname; }
-    public void setNickname(String nickname) { this.nickname = nickname; }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-    public String getProvider() { return provider; }
-    public void setProvider(String provider) { this.provider = provider; }
+    public String getUsername() {
+        return username;
+    }
 
-    public String getProviderId() { return providerId; }
-    public void setProviderId(String providerId) { this.providerId = providerId; }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    public String getNickname() {
+        return nickname;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
     public String getRegion() {
         return region;

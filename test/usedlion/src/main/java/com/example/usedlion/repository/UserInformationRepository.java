@@ -42,34 +42,33 @@ public class UserInformationRepository {
     // 새 회원 저장 --------//
     public void save(UserInformation u) {
         String sql = """
-        INSERT INTO user_information
-        (email, password, username, nickname, provider, provider_id, role, created_at, region)
-        VALUES (?,?,?,?,?,?,?,?,?)
-        """;; //G1: 테이블명 변경
+                INSERT INTO user_information
+                (email, password, username, nickname, provider, provider_id, role, created_at, region)
+                VALUES (?,?,?,?,?,?,?,?,?)
+                """;
+        ; // G1: 테이블명 변경
         jdbc.update(sql,
                 u.getEmail(),
-                u.getPassword(),             // 비밀번호
-                u.getUsername(),             // 이름
-                u.getNickname(),             // 닉네임
-                u.getProvider(),             // 'local'
-                u.getProviderId(),           // null
-                u.getRole(),                 // 'USER'
-                Timestamp.valueOf(u.getCreatedAt()),  // 가입일시
-                u.getRegion()
-        );
-}
+                u.getPassword(), // 비밀번호
+                u.getUsername(), // 이름
+                u.getNickname(), // 닉네임
+                u.getProvider(), // 'local'
+                u.getProviderId(), // null
+                u.getRole(), // 'USER'
+                Timestamp.valueOf(u.getCreatedAt()), // 가입일시
+                u.getRegion());
+    }
 
     public void updateProfileFields(UserInformation user) {
         String sql = """
-            UPDATE user_information
-            SET nickname = ?, region = ?, is_profile_complete = ?
-            WHERE email = ?
-        """;
+                    UPDATE user_information
+                    SET nickname = ?, region = ?, is_profile_complete = ?
+                    WHERE email = ?
+                """;
         jdbc.update(sql,
                 user.getNickname(),
                 user.getRegion(),
                 user.isProfileComplete(),
-                user.getEmail()
-        );
+                user.getEmail());
     }
 }

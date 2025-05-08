@@ -1,27 +1,36 @@
 package com.example.usedlion.controller;
 
-import com.example.usedlion.security.CustomUserDetails;
-import com.example.usedlion.dto.Post;
-import jakarta.servlet.http.HttpSession;
+import java.util.List;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.List;
+import com.example.usedlion.dto.PostDetailDto;
+import com.example.usedlion.dto.PostImage;
+import com.example.usedlion.security.CustomUserDetails;
+import com.example.usedlion.service.PostService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller // @RestController와는 별도!
 public class PageController {
+    private final PostService postService;
+
+    public PageController(PostService postService) {
+        this.postService = postService;
+    }
 
     @GetMapping("/")
-    public String landing(Model model){
+    public String landing(Model model) {
         model.addAttribute("hideHeader", "true");
         model.addAttribute("hideFooter", true);
-        return "landing";   // 로그인 화면
+        return "landing"; // 로그인 화면
     }
 
     @GetMapping("/dashboard")
@@ -29,32 +38,25 @@ public class PageController {
             @AuthenticationPrincipal OidcUser oidcUser,
             @AuthenticationPrincipal OAuth2User oauth2User,
             Authentication authentication,
-            Model model
-    ) {
+            Model model) {
         String name = "Guest";
         if (oidcUser != null) {
             name = oidcUser.getFullName();
-        }
-        else if (authentication != null
+        } else if (authentication != null
                 && authentication.getPrincipal() instanceof CustomUserDetails) {
             CustomUserDetails cud = (CustomUserDetails) authentication.getPrincipal();
             name = cud.getUser().getNickname();
-        }
-        else if (authentication != null
+        } else if (authentication != null
                 && authentication.getPrincipal() instanceof UserDetails) {
-            name = ((UserDetails) authentication.getPrincipal()).getUsername();  // 폼 로그인 사용자명 가져오기
+            name = ((UserDetails) authentication.getPrincipal()).getUsername(); // 폼 로그인 사용자명 가져오기
         }
         model.addAttribute("userName", name);
 
         // Example post data — replace with real DB call
-        List<Post> posts = List.of(
-                new Post("아이폰 13", "전자기기", "최상", "2025-05-06", "/images/iphone13.jpg"),
-                new Post("의자", "가구", "좋음", "2025-05-05", "/images/chair.jpg"),
-                new Post("의자", "가구", "좋음", "2025-05-05", "/images/chair.jpg"),
-                new Post("의자", "가구", "좋음", "2025-05-05", "/images/chair.jpg")
 
-        );
-        model.addAttribute("posts", posts);
+        List<PostDetailDto> posts = postService.getAllPostDetail();
+        List<PostImage> postImages = postService.makePostImage(posts);
+        model.addAttribute("posts", postImages);
 
         return "dashboard";
     }
@@ -69,8 +71,7 @@ public class PageController {
     public String chat(
             @AuthenticationPrincipal OAuth2User oauth2User,
             Authentication authentication,
-            Model model
-    ) {
+            Model model) {
         String nickname = "Guest";
 
         // ① OAuth2 로그인 (구글) 사용자의 프로필 이름이 곧 nickname
@@ -85,7 +86,7 @@ public class PageController {
         else if (authentication != null
                 && authentication.getPrincipal() instanceof CustomUserDetails) {
             CustomUserDetails cud = (CustomUserDetails) authentication.getPrincipal();
-            nickname = cud.getUser().getNickname();  // getUser() → UserInformation DTO
+            nickname = cud.getUser().getNickname(); // getUser() → UserInformation DTO
         }
 
         model.addAttribute("nickname", nickname);
