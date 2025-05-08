@@ -45,10 +45,12 @@
           .then((data) => {
             const div = document.getElementById("postDetail");
 
-            const created = new Date(data.createdAt).toLocaleString("ko-KR");
+            const created = data.createdAt
+              ? new Date(data.createdAt).toLocaleString("ko-KR")
+              : "";
 
-            const imageHtml = data.file
-              ? `<img src="http://localhost:8080/posts/${postId}/image" class="img-fluid mb-3"/>`
+            const imageHtml = data.imageUrl
+              ? `<img src="${data.imageUrl}" class="img-fluid mb-3"/>`
               : "";
 
             div.innerHTML = `

@@ -61,6 +61,7 @@
       const form = document.getElementById("postForm");
 
       if (postId) {
+        // 수정 모드일 경우 기존 데이터 불러오기
         fetch(`http://localhost:8080/posts/${postId}`)
           .then((res) => res.json())
           .then((data) => {

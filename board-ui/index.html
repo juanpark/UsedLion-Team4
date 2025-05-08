@@ -43,10 +43,15 @@
           container.innerHTML = "";
 
           data.forEach((post) => {
+            const imageHtml = post.imageUrl
+              ? `<img src="${post.imageUrl}" class="img-fluid rounded mb-2" style="max-height: 150px;" />`
+              : "";
+
             const card = document.createElement("div");
             card.className = "card";
             card.innerHTML = `
               <div class="card-body">
+                ${imageHtml}
                 <h5 class="card-title">${post.title}</h5>
                 <p class="card-text">${post.content}</p>
                 <div class="d-flex justify-content-between align-items-center">
