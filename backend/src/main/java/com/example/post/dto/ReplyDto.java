@@ -15,12 +15,11 @@ import lombok.*;
 public class ReplyDto {
 
     private Integer replyId;
-    private Integer Start;
     private Integer userId;
     private Integer ref;
     private Integer level;
     private Integer postId;
     private String content;
-    private LocalDateTime date;
+    private LocalDateTime created_at;
 
 }

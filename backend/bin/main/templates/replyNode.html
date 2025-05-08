@@ -1,7 +1,19 @@
 <!-- templates/fragments/replyNode.html -->
 <th:block xmlns:th="http://www.thymeleaf.org"
           xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-          th:fragment="reply(node, depth, postId)">
+          th:fragment="reply(node, depth, postId,userId)">
+          <style>
+            .reply-content {
+  background-color: #f1f3f5;
+  border-left: 4px solid #0d6efd;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  margin-left: 20px;  
+}
+          </style>
   <div th:style="'margin-left:' + (${depth} * 40) + 'px'">
 
     <!-- 1) 메타 정보 (헤더) -->
@@ -10,9 +22,9 @@
         <a th:href="@{/user/{userId}(userId=${node.reply.userId})}"
            th:text="${node.reply.username}">작성자</a>
       </strong>
-      <span th:text="${#temporals.format(node.reply.date,'yyyy-MM-dd HH:mm')}">날짜</span>
-      <button type="button"
-              th:onclick="'openReportModal(' + ${node.reply.replyId} + ')'"
+      <span th:text="${#temporals.format(node.reply.created_at,'yyyy-MM-dd HH:mm')}">날짜</span>
+      <button th:if="${node.reply.username != #authentication.principal.username}" type="button"
+      th:onclick="'openReportModal(' + ${node.reply.replyId} + ')'"
       >신고</button>
 
       <sec:authorize access="isAuthenticated()">
@@ -33,7 +45,8 @@
     </div>
 
     <!-- 3) 신고 모달 -->
-    <div th:id="'reportModal-' + ${node.reply.replyId}" class="modal">
+    <div 
+    th:id="'reportModal-' + ${node.reply.replyId}" class="modal">
       <form th:action="@{/report/{postId}/{userId}(
                       postId=${postId},
                       userId=${node.reply.userId})}"
@@ -93,6 +106,6 @@
 
   <!-- 자식 댓글 재귀 호출 -->
   <th:block th:if="${node.children}" th:each="child : ${node.children}">
-    <div th:replace="~{replyNode :: reply(${child}, ${depth + 1}, ${postId})}"></div>
+    <div th:replace="~{replyNode :: reply(${child}, ${depth + 1}, ${postId},${userId})}"></div>
   </th:block>
 </th:block>

@@ -46,7 +46,7 @@ public class ReplyController {
         reply.setUserId(user.getUserId());
         reply.setRef(0);
         reply.setLevel(0);
-        reply.setDate(LocalDateTime.now());
+        reply.setCreated_at(LocalDateTime.now());
 
         replyService.createReply(reply);
         reply.setRef(0);
@@ -69,7 +69,7 @@ public class ReplyController {
         reply.setRef(target.getReplyId());
         reply.setLevel(target.getLevel() + 1);
         reply.setStart(target.getStart());
-        reply.setDate(LocalDateTime.now());
+        reply.setCreated_at(LocalDateTime.now());
 
         replyService.createReply(reply);
         return "redirect:/post/" + postId;

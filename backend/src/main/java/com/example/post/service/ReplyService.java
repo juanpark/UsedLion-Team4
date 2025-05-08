@@ -40,7 +40,7 @@ public class ReplyService {
         Reply existing = replyRepository.findById(replyId)
                 .orElseThrow(() -> new RuntimeException("댓글이 존재하지 않습니다."));
         existing.setContent(updatedReply.getContent());
-        existing.setDate(updatedReply.getDate()); // 수정 시 시간도 갱신
+        existing.setCreated_at(updatedReply.getCreated_at()); // 수정 시 시간도 갱신
         replyRepository.save(existing);
     }
 

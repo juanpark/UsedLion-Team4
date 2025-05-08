@@ -39,34 +39,23 @@ public class PostService {
         return postRepository.getPostDetailByPostId(postId);
     }
 
-    public Post updatePost(Integer id, Post post) {
-        Post existingPost = postRepository.findById(id).orElse(null);
-        if (existingPost == null) {
-            return null;
-        }
-        if (post.getPostId() != null) {
-            existingPost.setPostId(post.getPostId());
-        }
-        if (post.getPrice() != null) {
-            existingPost.setPrice(post.getPrice());
-        }
-        if (post.getTitle() != null) {
-            existingPost.setTitle(post.getTitle());
-        }
-        if (post.getContent() != null) {
-            existingPost.setContent(post.getContent());
-        }
-        if (post.getDate() != null) {
-            existingPost.setDate(post.getDate());
-        }
-        if (post.getUserId() != null) {
-            existingPost.setUserId(post.getUserId());
-        }
-        return postRepository.save(existingPost);
+    public Post update(Integer id, Post updatedPost) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
+        post.setTitle(updatedPost.getTitle());
+        post.setContent(updatedPost.getContent());
+        post.setPrice(updatedPost.getPrice());
+        post.setFile(updatedPost.getFile());
+        post.setStatus(updatedPost.getStatus());
+        return postRepository.save(post);
     }
 
     public List<PostDetailDto> getAllPostDetail() {
         return postRepository.getAllPostDetail();
+    }
+
+    public void deletePost(Integer postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+        postRepository.delete(post);
     }
 
     public List<Post> getPostsByUserId(Integer userId) {

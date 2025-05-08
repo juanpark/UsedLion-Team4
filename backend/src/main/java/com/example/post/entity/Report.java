@@ -18,7 +18,8 @@ public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer reportId;
+    private Integer id;
+    private Integer reporterId;
     private Integer userId;
     private Integer targetId;
     private String content;

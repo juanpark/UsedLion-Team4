@@ -23,6 +23,6 @@ public class Reply {
     private Integer level;
     private Integer postId;
     private String content;
-    private LocalDateTime date;
+    private LocalDateTime created_at;
 
 }

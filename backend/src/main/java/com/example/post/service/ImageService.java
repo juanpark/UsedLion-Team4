@@ -29,4 +29,17 @@ public class ImageService {
         return imageRepository.findByPostId(postId);
     }
 
+    public void deleteImage(Integer imageId) {
+        Image image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new RuntimeException("Image not found"));
+        imageRepository.delete(image);
+    }
+
+    public void deleteImage(Integer postId, Integer index) {
+        List<Image> images = getImagesByPostId(postId);
+        if (index >= 0 && index < images.size()) {
+            deleteImage(images.get(index).getImageId());
+        }
+    }
+
 }

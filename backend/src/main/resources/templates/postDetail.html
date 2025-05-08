@@ -18,6 +18,17 @@
         background: white;
         border: 1px solid #ddd;
         border-radius: 8px;
+        max-height: 1000px;
+
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .reply-container {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        max-height: 600px;
+        overflow-y: auto;
         padding: 20px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
@@ -123,9 +134,26 @@
           th:text="${post.username}"
           >작성자</a
         >
-        <button type="button" onclick="openReportModal('post')">신고하기</button
-        ><br />
+        <div th:if="${currentUsername != post.username}">
+          <button type="button" onclick="openReportModal('post')">
+            신고하기
+          </button>
+        </div>
 
+        <div th:if="${currentUsername == post.username}">
+          <a th:href="@{/post/edit/{postId}(postId=${post.postId})}">
+            <button type="button">✏️ 수정</button>
+          </a>
+
+          <form
+            th:action="@{/post/delete/{id}(id=${post.postId})}"
+            method="post"
+            onsubmit="return confirm('정말 삭제하시겠습니까?')"
+          >
+            <input type="hidden" name="_method" value="delete" />
+            <button type="submit">🗑️ 삭제하기</button>
+          </form>
+        </div>
         <!-- 게시글 신고 모달 -->
         <div id="reportModal-post" class="modal">
           <form
@@ -149,7 +177,8 @@
         </div>
 
         작성일:
-        <span th:text="${#temporals.format(post.date, 'yyyy-MM-dd HH:mm')}"
+        <span
+          th:text="${#temporals.format(post.created_at, 'yyyy-MM-dd HH:mm')}"
           >날짜</span
         >
       </div>
@@ -168,12 +197,12 @@
       </div>
     </div>
 
-    <div>
+    <div class="reply-container">
       <h2>댓글</h2>
       <ul>
         <th:block th:each="node : ${replyTree}">
           <div
-            th:replace="~{replyNode :: reply(${node}, 0, ${post.postId})}"
+            th:replace="~{replyNode :: reply(${node}, 0, ${post.postId},${post.userId})}"
           ></div>
         </th:block>
       </ul>
@@ -189,7 +218,5 @@
       <input type="hidden" name="postId" th:value="${post.postId}" />
       <button type="submit">댓글 작성</button>
     </form>
-
-    <button type="button" onclick="location.href='/hello'">게시판 목록</button>
   </body>
 </html>

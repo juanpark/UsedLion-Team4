@@ -22,7 +22,7 @@ public class PostDto {
     private String title;
     private Integer price;
     private String content;
-    private LocalDateTime date;
+    private LocalDateTime created_at;
     private SaleStatus status;
 
 }

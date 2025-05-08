@@ -1,5 +1,7 @@
 package com.example.post.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,10 +21,13 @@ public class UserInformation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id") // 실제 DB 컬럼명과 매핑
     private Integer userId;
-
+    private String email;
+    private String password;
     private String username;
     private String nickname;
-    private String password;
-    private String email;
+    private String provider;
+    private String provider_id;
+    private String role;
+    private LocalDateTime created_at;
 
 }

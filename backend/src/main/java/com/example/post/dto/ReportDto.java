@@ -16,7 +16,8 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReportDto {
 
-    private Integer reportId;
+    private Integer id;
+    private Integer reporterId;
     private Integer userId;
     private Integer targetId;
     private String content;

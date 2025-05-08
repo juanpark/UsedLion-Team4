@@ -25,7 +25,7 @@ public class Post {
     private String title;
     private Integer price;
     private String content;
-    private LocalDateTime date;
+    private LocalDateTime created_at;
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('ONSALE','RESERVED','SOLDOUT')")
     private SaleStatus status;

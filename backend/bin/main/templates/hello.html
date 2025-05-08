@@ -248,7 +248,7 @@
 
               <td th:text="${post.post.view}">조회수</td>
               <td
-                th:text="${#temporals.format(post.post.date, 'yyyy-MM-dd HH:mm')}"
+                th:text="${#temporals.format(post.post.created_at, 'yyyy-MM-dd HH:mm')}"
               >
                 작성일
               </td>

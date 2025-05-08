@@ -123,7 +123,7 @@ public class UserController {
         String username = principal.getName();
         UserInformation user = userService.getUserByUsername(username);
         Report report = new Report();
-        report.setUserId(user.getUserId());
+        report.setReporterId(user.getUserId());
         report.setTargetId(userId);
         report.setContent(reason);
 
