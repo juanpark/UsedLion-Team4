@@ -9,24 +9,14 @@
     />
     <style>
       body {
-        background-color: #f8fafc;
+        background-color: #fef7eb;
         font-family: "Segoe UI", sans-serif;
+        margin: 0;
       }
-      .header {
-        background: linear-gradient(to right, #4f46e5, #3b82f6);
-        color: white;
-        padding: 1rem;
-      }
-      .container {
-        max-width: 800px;
-        margin: 2rem auto;
-      }
-      .card {
+      .glass-card {
+        background: rgba(255, 255, 255, 0.85);
         border-radius: 1rem;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        padding: 2rem;
-        background-color: white;
-        margin-bottom: 1.5rem;
       }
       .post-title {
         font-size: 24px;
@@ -74,6 +64,10 @@
         max-width: 90%;
         box-sizing: border-box;
       }
+      .glass-btn {
+        display: inline-block;
+        margin-top: 2rem;
+      }
     </style>
 
     <script>
@@ -108,15 +102,9 @@
   </head>
 
   <body>
-    <div class="header d-flex justify-content-between align-items-center px-4">
-      <h4 class="m-0">📄 글 상세보기</h4>
-      <a href="/dashboard" class="btn btn-light">목록</a>
-    </div>
-
-    <div id="modalBackdrop"></div>
-
-    <div class="container">
-      <div class="card">
+    <div class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+      <div class="glass-card p-4" style="width: 100%; max-width: 800px;">
+        <h2 class="text-center mb-4">📄 글 상세보기</h2>
         <div class="post-title" th:text="${post.title}">제목</div>
 
         <div class="post-meta">
@@ -217,33 +205,36 @@
             />
           </div>
         </div>
-      </div>
 
-      <div class="reply-container mt-4">
-        <h5 class="mb-3">💬 댓글</h5>
-        <ul>
-          <th:block th:each="node : ${replyTree}">
-            <div
-              th:replace="~{replyNode :: reply(${node}, 0, ${post.postId},${post.userId})}"
-            ></div>
-          </th:block>
-        </ul>
+        <div class="reply-container mt-4">
+          <h5 class="mb-3">💬 댓글</h5>
+          <ul>
+            <th:block th:each="node : ${replyTree}">
+              <div
+                th:replace="~{replyNode :: reply(${node}, 0, ${post.postId},${post.userId})}"
+              ></div>
+            </th:block>
+          </ul>
 
-        <form
-          th:action="@{/reply/{postId}(postId=${post.postId})}"
-          method="POST"
-          class="mt-3"
-        >
-          <input
-            type="text"
-            name="content"
-            class="form-control mb-2"
-            placeholder="댓글을 입력하세요"
-            required
-          />
-          <input type="hidden" name="postId" th:value="${post.postId}" />
-          <button type="submit" class="btn btn-primary">댓글 작성</button>
-        </form>
+          <form
+            th:action="@{/reply/{postId}(postId=${post.postId})}"
+            method="POST"
+            class="mt-3"
+          >
+            <input
+              type="text"
+              name="content"
+              class="form-control mb-2"
+              placeholder="댓글을 입력하세요"
+              required
+            />
+            <input type="hidden" name="postId" th:value="${post.postId}" />
+            <button type="submit" class="btn btn-primary">댓글 작성</button>
+          </form>
+        </div>
+        <div class="text-center mt-4">
+          <a href="javascript:history.back()" class="btn btn-secondary">⬅ 이전으로</a>
+        </div>
       </div>
     </div>
   </body>
