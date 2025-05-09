@@ -92,6 +92,14 @@
         document.getElementById("reportModal-" + id).style.display = "block";
         document.getElementById("modalBackdrop").style.display = "block";
       }
+      function openEditModal(id) {
+        document.getElementById("editModal-" + id).style.display = "block";
+        document.getElementById("modalBackdrop").style.display = "block";
+      }
+      function openDeleteModal(id) {
+        document.getElementById("deleteModal-" + id).style.display = "block";
+        document.getElementById("modalBackdrop").style.display = "block";
+      }
       function closeModal(modalId) {
         document.getElementById(modalId).style.display = "none";
         document.getElementById("modalBackdrop").style.display = "none";
