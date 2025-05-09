@@ -24,15 +24,42 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         padding: 1.5rem;
       }
+      table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #dee2e6;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+        text-align: center;
+        font-size: 1rem;
+      }
+      th {
+        background-color: #f1f3f5;
+        font-weight: bold;
+      }
+      tr:hover {
+        background-color: #f9f9f9;
+      }
       .search-container {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
         margin: 1.5rem 0;
       }
-      .search-container input,
+      .search-container input[type="text"] {
+        padding: 8px;
+        width: 300px;
+      }
       .search-container button {
-        height: 38px;
+        padding: 8px 16px;
+        border-radius: 4px;
       }
       #filterMenu {
         display: none;
@@ -48,9 +75,6 @@
         padding: 6px 0;
         font-weight: 500;
         cursor: pointer;
-      }
-      #filterMenu label:hover {
-        color: #0d6efd;
       }
       .modal {
         display: none;
@@ -69,12 +93,70 @@
         border-radius: 0.75rem;
         width: 90%;
         max-width: 400px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       }
       .sort-icon {
         cursor: pointer;
         font-size: 0.9rem;
         margin-left: 6px;
+      }
+      @media screen and (max-width: 768px) {
+        .table-container table,
+        .table-container thead,
+        .table-container tbody,
+        .table-container th,
+        .table-container td,
+        .table-container tr {
+          display: block;
+          width: 100%;
+        }
+
+        .table-container thead {
+          display: none;
+        }
+
+        .table-container tr {
+          margin-bottom: 1rem;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          padding: 1rem;
+          background-color: #fff;
+        }
+
+        .table-container td {
+          padding: 8px 12px;
+          font-size: 1rem;
+          border: none;
+          border-bottom: 1px solid #eee;
+        }
+
+        .table-container td:last-child {
+          border-bottom: none;
+        }
+
+        .table-container td::before {
+          content: attr(data-label);
+          font-weight: bold;
+          display: block;
+          color: #555;
+          margin-bottom: 4px;
+        }
+
+        .table-container img {
+          max-width: 100%;
+          height: auto;
+        }
+      }
+      .report-warning {
+        background-color: #ffe58f;
+      }
+      .report-danger {
+        background-color: #ff9ca5;
+      }
+      .report-critical {
+        background-color: #972833;
+      }
+      .report-none {
+        background-color: #b6f6c5;
       }
     </style>
     <script>
@@ -203,24 +285,14 @@
 
   <body layout:fragment="content">
     <div class="container my-4">
-      <div
-        th:if="${param.signupSuccess}"
-        class="alert alert-success text-center mt-3"
-      >
-        🎉 회원가입이 완료되었습니다! 중고사자에 오신 것을 환영합니다.
-      </div>
-
       <h2 class="mb-4">📦 중고로사자 광장</h2>
-
       <a th:href="@{/post/create}" class="btn btn-primary mb-3"
         >➕ 게시글 작성</a
       >
-
       <div class="search-container">
         <button class="btn btn-outline-secondary" id="regionButton">
           📍 지역
         </button>
-
         <div id="regionModal" class="modal">
           <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -242,7 +314,6 @@
           id="hiddenRegion"
           th:value="${region != null ? region : ''}"
         />
-
         <button class="btn btn-outline-secondary" id="filterToggle">
           🔍 조건
         </button>
@@ -250,22 +321,7 @@
           class="btn btn-outline-secondary"
           th:if="${region != null}"
           th:text="|지역 = ${region}|"
-        >
-          >
-        </button>
-
-        <div id="filterMenu">
-          <label
-            ><input type="radio" name="filter" value="title" checked />
-            제목</label
-          >
-          <label
-            ><input type="radio" name="filter" value="username" /> 닉네임</label
-          >
-          <label
-            ><input type="radio" name="filter" value="content" /> 내용</label
-          >
-        </div>
+        ></button>
 
         <input
           type="text"
@@ -278,17 +334,25 @@
           초기화
         </button>
       </div>
-
       <div th:if="${filter}">
         <p>
           검색 조건:
-          <span th:text="|${filter} 이 ${condition}을 포함하는 결과|"></span>
+          <span th:text="|${filter}이 ${condition}을 포함하는 결과|"></span>
         </p>
       </div>
-
-      <div class="table-container mt-3">
-        <table class="table table-hover" id="postTable">
-          <thead class="table-light">
+      <div id="filterMenu">
+        <label
+          ><input type="radio" name="filter" value="title" checked />
+          제목</label
+        >
+        <label
+          ><input type="radio" name="filter" value="username" /> 닉네임</label
+        >
+        <label><input type="radio" name="filter" value="content" /> 내용</label>
+      </div>
+      <div class="table-container">
+        <table id="postTable">
+          <thead>
             <tr>
               <th onclick="sortTable(0)">
                 제목 <span class="sort-icon">↕</span>
@@ -302,22 +366,34 @@
               <th onclick="sortTable(3)">
                 작성일 <span class="sort-icon">↕</span>
               </th>
-              <th>지역 <span></span></th>
-              <th>썸네일 <span></span></th>
+              <th>지역</th>
+              <th>판매상태</th>
+              <th>썸네일</th>
             </tr>
           </thead>
           <tbody>
             <th:block th:each="post : ${posts}">
-              <tr>
+              <tr
+                th:class="${post.reportCount >= 30 ? 'report-critical' :
+                post.reportCount >= 20 ? 'report-danger' :
+                post.reportCount >= 10 ? 'report-warning' : 
+                'report-none'}"
+              >
                 <td>
                   <a
                     th:href="@{/post/{postId}(postId=${post.post.postId})}"
                     th:text="${post.post.title}"
-                    class="text-decoration-none text-primary fw-semibold"
-                    >제목</a
+                    style="
+                      color: #2200ff;
+                      font-size: 1.5rem;
+                      font-weight: bold;
+                      text-decoration: none;
+                    "
+                    >게시글 제목</a
                   >
                 </td>
-                <td>
+
+                <td data-label="작성자">
                   <a
                     th:href="@{/user/{userId}(userId=${post.post.userId})}"
                     th:text="${post.post.username}"
@@ -325,18 +401,26 @@
                     >작성자</a
                   >
                 </td>
-                <td th:text="${post.post.view}">조회수</td>
+                <td data-label="조회수" th:text="${post.post.view}">조회수</td>
                 <td
+                  data-label="작성일"
                   th:text="${#temporals.format(post.post.created_at, 'yyyy-MM-dd HH:mm')}"
                 >
                   작성일
                 </td>
-                <td th:text="${post.post.region}">지역</td>
-                <td>
+                <td data-label="지역" th:text="${post.post.region}">지역</td>
+                <td data-label="상태" th:switch="${post.post.status.name()}">
+                  <span th:case="'ONSALE'">판매중</span>
+                  <span th:case="'RESERVED'">예약중</span>
+                  <span th:case="'SOLDOUT'">판매완료</span>
+                  <span th:case="*">알 수 없음</span>
+                </td>
+                <td data-label="썸네일">
                   <img
                     th:if="${post.img != null}"
                     th:src="'data:image/jpeg;base64,' + ${post.img}"
-                    alt="게시글 이미지"
+                    alt="이미지"
+                    style="max-width: 60px; max-height: 60px"
                   />
                 </td>
               </tr>
