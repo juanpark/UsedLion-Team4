@@ -62,7 +62,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <div class="navbar-nav ms-auto">
             <a class="nav-link" href="/post/create">상품 등록</a>
-            <a class="nav-link" href="/chat">채팅 라운지</a>
+            <a th:href="@{/chat/{postId}(postId=1)}" class="btn btn-primary">채팅 라운지</a>
             <a class="nav-link d-inline" href="/profile">프로필</a>
             <a class="nav-link" href="/logout">로그아웃</a>
           </div>
