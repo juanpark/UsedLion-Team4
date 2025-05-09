@@ -112,6 +112,8 @@ public class PostController {
         model.addAttribute("imageList", imageList);
         model.addAttribute("currentUsername", userService.getUserByEmail(principal.getName()).getUsername());
 
+        int currentUserId = userService.getUserByEmail(principal.getName()).getUserId();
+        model.addAttribute("currentUserId", currentUserId);
         return "postDetail";
     }
 
