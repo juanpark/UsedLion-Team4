@@ -180,12 +180,8 @@
     </div>
 
     <!-- 3) 신고 모달 -->
-    <div 
-    th:id="'reportModal-' + ${node.reply.id}" class="my-modal">
-      <form th:action="@{/report/{postId}/{userId}(
-                      postId=${postId},
-                      userId=${node.reply.userId})}"
-            method="post">
+    <div th:id="'reportModal-' + ${node.reply.id}" class="my-modal">
+      <form th:action="@{/report/{postId}/{userId}(postId=${postId},userId=${node.reply.userId})}" method="post">
             <h5 class="mb-3">🚨 신고 사유 입력</h5>
             <textarea
               name="reason"
@@ -202,8 +198,6 @@
             </div>
           </form>
         </div>
-…
-
     <!-- 4) 수정 모달 -->
     <div th:id="'editModal-' + ${node.reply.id}" class="my-modal">
       <form th:action="@{/reply/edit/{replyId}(
