@@ -8,6 +8,7 @@
       background-color: #fef1e6;
       font-family: "Segoe UI", sans-serif;
     }
+
     .table-container {
       max-height: 700px;
       overflow-y: auto;
@@ -16,11 +17,13 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       padding: 1.5rem;
     }
+
     table {
       width: 100%;
       table-layout: fixed;
       border-collapse: collapse;
     }
+
     th, td {
       padding: 12px;
       border-bottom: 1px solid #dee2e6;
@@ -31,27 +34,33 @@
       text-align: center;
       font-size: 1rem;
     }
+
     th {
       background-color: #f1f3f5;
       font-weight: bold;
     }
+
     tr:hover {
       background-color: #f9f9f9;
     }
+
     .search-container {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin: 1.5rem 0;
     }
+
     .search-container input[type="text"] {
       padding: 8px;
       width: 300px;
     }
+
     .search-container button {
       padding: 8px 16px;
       border-radius: 4px;
     }
+
     #filterMenu {
       display: none;
       background-color: #ffffff;
@@ -61,12 +70,14 @@
       position: absolute;
       z-index: 1000;
     }
+
     #filterMenu label {
       display: block;
       padding: 6px 0;
       font-weight: 500;
       cursor: pointer;
     }
+
     .modal {
       display: none;
       position: fixed;
@@ -77,6 +88,7 @@
       height: 100%;
       background: rgba(0, 0, 0, 0.4);
     }
+
     .modal-content {
       background-color: white;
       margin: 10% auto;
@@ -85,11 +97,13 @@
       width: 90%;
       max-width: 400px;
     }
+
     .sort-icon {
       cursor: pointer;
       font-size: 0.9rem;
       margin-left: 6px;
     }
+
     @media screen and (max-width: 768px) {
       .table-container table,
       .table-container thead,
@@ -137,55 +151,142 @@
         height: auto;
       }
     }
+
+    .report-warning {
+      background-color: #ffe58f;
+    }
+
+    .report-danger {
+      background-color: #ff9ca5;
+    }
+
+    .report-critical {
+      background-color: #972833;
+    }
+
+    .report-none {
+      background-color: #b6f6c5;
+    }
   </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("filterToggle")?.addEventListener("click", function () {
+        const filterMenu = document.getElementById("filterMenu");
+        filterMenu.style.display = filterMenu.style.display === "none" ? "block" : "none";
+      });
+
+      document.addEventListener("click", function (event) {
+        const filterMenu = document.getElementById("filterMenu");
+        const filterToggle = document.getElementById("filterToggle");
+        if (filterMenu && !filterMenu.contains(event.target) && event.target !== filterToggle) {
+          filterMenu.style.display = "none";
+        }
+      });
+
+      const filterInputs = document.querySelectorAll('input[name="filter"]');
+      filterInputs.forEach((input) => {
+        input.addEventListener("change", function () {
+          document.getElementById("filterMenu").style.display = "none";
+        });
+      });
+    });
+
+    function search() {
+      const searchInput = document.getElementById("searchInput").value;
+      const selectedFilter = document.querySelector('input[name="filter"]:checked');
+      // implement search logic here
+    }
+
+    function clearPage() {
+      location.href = location.pathname;
+    }
+
+    function closeModal() {
+      document.getElementById("regionModal").style.display = "none";
+    }
+
+    function applyRegion() {
+      const value = document.getElementById("regionInput").value;
+      document.getElementById("hiddenRegion").value = value;
+      document.getElementById("regionModal").style.display = "none";
+      // optionally trigger search/filter refresh here
+    }
+  </script>
 </head>
 
 <body layout:fragment="content">
 <div class="container my-4">
   <h2 class="mb-4">📦 중고로사자 광장</h2>
   <a th:href="@{/post/create}" class="btn btn-primary mb-3">➕ 게시글 작성</a>
+
   <div class="search-container">
-    <button class="btn btn-outline-secondary" id="regionButton">📍 지역</button>
+    <button class="btn btn-outline-secondary" id="regionButton" onclick="document.getElementById('regionModal').style.display = 'block'">📍 지역</button>
+    <div id="regionModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h5>지역 입력</h5>
+        <input type="text" class="form-control my-2" id="regionInput" placeholder="지역명을 입력하세요" />
+        <button class="btn btn-primary w-100" onclick="applyRegion()">적용</button>
+      </div>
+    </div>
+
     <input type="hidden" id="hiddenRegion" th:value="${region != null ? region : ''}" />
     <button class="btn btn-outline-secondary" id="filterToggle">🔍 조건</button>
     <input type="text" class="form-control" id="searchInput" placeholder="검색어 입력" />
     <button class="btn btn-primary" onclick="search()">검색</button>
     <button class="btn btn-outline-danger" onclick="clearPage()">초기화</button>
   </div>
+
   <div id="filterMenu">
     <label><input type="radio" name="filter" value="title" checked /> 제목</label>
     <label><input type="radio" name="filter" value="username" /> 닉네임</label>
     <label><input type="radio" name="filter" value="content" /> 내용</label>
   </div>
+
+  <div th:if="${filter}">
+    <p>
+      검색 조건:
+      <span th:text="|${filter}이 ${condition}을 포함하는 결과|"></span>
+    </p>
+  </div>
+
   <div class="table-container">
     <table id="postTable">
       <thead>
-      <tr>
-        <th onclick="sortTable(0)">제목 <span class="sort-icon">↕</span></th>
-        <th onclick="sortTable(1)">작성자 <span class="sort-icon">↕</span></th>
-        <th onclick="sortTable(2)">조회수 <span class="sort-icon">↕</span></th>
-        <th onclick="sortTable(3)">작성일 <span class="sort-icon">↕</span></th>
-        <th>지역</th>
-        <th>썸네일</th>
-      </tr>
+        <tr>
+          <th onclick="sortTable(0)">제목 <span class="sort-icon">↕</span></th>
+          <th onclick="sortTable(1)">작성자 <span class="sort-icon">↕</span></th>
+          <th onclick="sortTable(2)">조회수 <span class="sort-icon">↕</span></th>
+          <th onclick="sortTable(3)">작성일 <span class="sort-icon">↕</span></th>
+          <th>지역</th>
+          <th>판매상태</th>
+          <th>썸네일</th>
+        </tr>
       </thead>
       <tbody>
-      <th:block th:each="post : ${posts}">
-        <tr>
-          <td data-label="제목">
-            <a th:href="@{/post/{postId}(postId=${post.post.postId})}" th:text="${post.post.title}" class="text-decoration-none text-primary fw-semibold">제목</a>
-          </td>
-          <td data-label="작성자">
-            <a th:href="@{/user/{userId}(userId=${post.post.userId})}" th:text="${post.post.username}" class="text-decoration-none text-dark">작성자</a>
-          </td>
-          <td data-label="조회수" th:text="${post.post.view}">조회수</td>
-          <td data-label="작성일" th:text="${#temporals.format(post.post.created_at, 'yyyy-MM-dd HH:mm')}">작성일</td>
-          <td data-label="지역" th:text="${post.post.region}">지역</td>
-          <td data-label="썸네일">
-            <img th:if="${post.img != null}" th:src="'data:image/jpeg;base64,' + ${post.img}" alt="이미지" style="max-width: 60px; max-height: 60px" />
-          </td>
-        </tr>
-      </th:block>
+        <th:block th:each="post : ${posts}">
+          <tr th:class="${post.reportCount >= 30 ? 'report-critical' : post.reportCount >= 20 ? 'report-danger' : post.reportCount >= 10 ? 'report-warning' : 'report-none'}">
+            <td data-label="제목">
+              <a th:href="@{/post/{postId}(postId=${post.post.postId})}" th:text="${post.post.title}" class="text-decoration-none text-primary fw-semibold">제목</a>
+            </td>
+            <td data-label="작성자">
+              <a th:href="@{/user/{userId}(userId=${post.post.userId})}" th:text="${post.post.username}" class="text-decoration-none text-dark">작성자</a>
+            </td>
+            <td data-label="조회수" th:text="${post.post.view}">조회수</td>
+            <td data-label="작성일" th:text="${#temporals.format(post.post.created_at, 'yyyy-MM-dd HH:mm')}">작성일</td>
+            <td data-label="지역" th:text="${post.post.region}">지역</td>
+            <td data-label="상태" th:switch="${post.post.status.name()}">
+              <span th:case="'ONSALE'">판매중</span>
+              <span th:case="'RESERVED'">예약중</span>
+              <span th:case="'SOLDOUT'">판매완료</span>
+              <span th:case="*">알 수 없음</span>
+            </td>
+            <td data-label="썸네일">
+              <img th:if="${post.img != null}" th:src="'data:image/jpeg;base64,' + ${post.img}" alt="이미지" style="max-width: 60px; max-height: 60px" />
+            </td>
+          </tr>
+        </th:block>
       </tbody>
     </table>
   </div>

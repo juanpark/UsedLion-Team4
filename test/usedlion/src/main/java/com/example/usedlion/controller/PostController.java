@@ -65,6 +65,7 @@ public class PostController {
         post.setPrice(price);
         post.setContent(content);
         post.setStatus(status);
+        System.out.println("post.getStatus() = " + post.getStatus());
 
         if (deleteIndices != null) {
             for (Integer index : deleteIndices) {

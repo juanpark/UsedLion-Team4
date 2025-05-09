@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
 
 @Getter
@@ -22,6 +25,8 @@ public class PostDetailDto {
     private Integer price;
     private String content;
     private LocalDateTime created_at;
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('ONSALE', 'RESERVED', 'SOLDOUT')")
     private SaleStatus status;
     private String email;
     private String username;

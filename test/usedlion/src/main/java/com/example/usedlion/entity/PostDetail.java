@@ -7,6 +7,8 @@ import com.example.usedlion.dto.SaleStatus;
 import groovy.transform.builder.Builder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,7 +34,11 @@ public class PostDetail {
     private Integer price;
     private String content;
     private LocalDateTime created_at;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('ONSALE', 'RESERVED', 'SOLDOUT')")
     private SaleStatus status;
+
     private String email;
     private String username;
 
