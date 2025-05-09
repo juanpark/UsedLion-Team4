@@ -430,74 +430,71 @@
   });
 
   function connectWebSocket() {
-    if (ws !== null) ws.close();
-    ws = new WebSocket(`wss://localhost:8080/ws/chat/${postId}`);
+  if (ws !== null) ws.close();
 
-    ws.onopen = function () {
-      isConnected = true;
-      updateConnectionStatus();
-      addSystemMessage('채팅방에 연결되었습니다.');
-      loadPreviousMessages();
+  const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+  const host = window.location.host;
+  const wsUrl = `${protocol}${host}/ws/chat/${postId}`;
 
-    };
+  ws = new WebSocket(wsUrl);
 
-    ws.onmessage = function (event) {
-      try {
-        const message = JSON.parse(event.data);
-        switch (message.type) {
-          case 'JOIN':
-            addSystemMessage('새로운 사용자가 입장했습니다.');
-            break;
-          case 'LEAVE':
-            addSystemMessage('사용자가 퇴장했습니다.');
-            break;
-          case 'STATUS':
-            const countElement = document.getElementById("connected-count");
-            countElement.textContent = message.count;
-            break;
-          case 'MESSAGE':
-            displayMessage(message);
-            break;
-          case "EDITED":
-            // 기존 메시지를 찾아서 내용 수정
-            const msgElem = document.querySelector(`[data-message-id='${message.msgId}']`);
-            if (msgElem) {
-              const textDiv = msgElem.querySelector(".message-text");
-              if (textDiv) {
-                textDiv.textContent = message.content;
-              }
-            }
-            break;
-          case "DELETED":
-            // 메시지 삭제
-            const deleteMsgElem = document.querySelector(`[data-message-id='${message.msgId}']`);
-            if (deleteMsgElem) {
-              deleteMsgElem.remove(); // DOM에서 해당 메시지 삭제
-              console.log(`메시지 ${message.msgId}가 삭제되었습니다.`);
-            }
-            break;
-          default:
-            if (message.error) addSystemMessage('오류: ' + message.error);
-            else displayMessage(message);
-        }
-      } catch (error) {
-        console.error('메시지 처리 오류:', error);
+  ws.onopen = function () {
+    isConnected = true;
+    updateConnectionStatus();
+    addSystemMessage('채팅방에 연결되었습니다.');
+    loadPreviousMessages();
+  };
+
+  ws.onmessage = function (event) {
+    try {
+      const message = JSON.parse(event.data);
+      switch (message.type) {
+        case 'JOIN':
+          addSystemMessage('새로운 사용자가 입장했습니다.');
+          break;
+        case 'LEAVE':
+          addSystemMessage('사용자가 퇴장했습니다.');
+          break;
+        case 'STATUS':
+          document.getElementById("connected-count").textContent = message.count;
+          break;
+        case 'MESSAGE':
+          displayMessage(message);
+          break;
+        case 'EDITED':
+          const msgElem = document.querySelector(`[data-message-id='${message.msgId}']`);
+          if (msgElem) {
+            const textDiv = msgElem.querySelector(".message-text");
+            if (textDiv) textDiv.textContent = message.content;
+          }
+          break;
+        case 'DELETED':
+          const deleteMsgElem = document.querySelector(`[data-message-id='${message.msgId}']`);
+          if (deleteMsgElem) deleteMsgElem.remove();
+          break;
+        default:
+          if (message.error) addSystemMessage('오류: ' + message.error);
+          else displayMessage(message);
       }
-    };
+    } catch (error) {
+      console.error('메시지 처리 오류:', error);
+    }
+  };
 
-    ws.onclose = () => {
-      isConnected = false;
-      updateConnectionStatus();
-      setTimeout(connectWebSocket, 3000);
-    };
+  ws.onclose = () => {
+    isConnected = false;
+    updateConnectionStatus();
+    addSystemMessage('연결이 끊어졌습니다. 재연결을 시도합니다...');
+    setTimeout(connectWebSocket, 3000);
+  };
 
-    ws.onerror = (error) => {
-      console.error('WebSocket 오류:', error);
-      isConnected = false;
-      updateConnectionStatus();
-      addSystemMessage('연결 오류가 발생했습니다.');
-    };
-  }
+  ws.onerror = (error) => {
+    console.error('WebSocket 오류:', error);
+    isConnected = false;
+    updateConnectionStatus();
+    addSystemMessage('연결 오류가 발생했습니다.');
+  };
+}
 
   function sendMessage() {
     const content = messageInput.value.trim();
