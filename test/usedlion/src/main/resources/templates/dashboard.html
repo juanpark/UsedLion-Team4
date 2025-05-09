@@ -1,459 +1,194 @@
 <!DOCTYPE html>
-<html
-  lang="ko"
-  xmlns:th="http://www.thymeleaf.org"
-  layout:decorate="~{layout}"
-  xmlns:layout="http://www.w3.org/1999/xhtml"
->
-  <head>
-    <title>중고로사자 광장</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      .table-container {
-        max-height: 800px;
-        position: relative;
-        overflow-y: auto;
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
-        background-color: rgba(255, 255, 255, 0.8);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-      }
-
-      table {
-        position: sticky;
-        width: 100%;
-        border-collapse: collapse;
-        border-spacing: 0;
-        font-family: "Segoe UI", sans-serif;
-        background-color: white;
-      }
-
-      th {
-        position: sticky;
-        top: 0;
-        background-color: #f1f3f5;
-        color: #000000;
-        text-align: left;
-        padding: 12px 16px;
-        font-weight: 600;
-        font-size: 1.5rem;
-        border-bottom: 2px solid #dee2e6;
-        z-index: 2;
-      }
-      thead {
-        position: sticky;
-      }
-
-      td {
-        padding: 12px 16px;
-        border-bottom: 1px solid #eee;
-        font-size: 1.5rem;
-        color: #000000;
-      }
-
-      tr:hover {
-        background-color: #f9f9f9;
-        transition: background-color 0.2s ease-in-out;
-      }
-
-      th:first-child,
-      td:first-child {
-        border-top-left-radius: 8px;
-      }
-      th:last-child,
-      td:last-child {
-        border-top-right-radius: 8px;
-      }
-      body {
-        font-family: Arial, sans-serif;
-      }
-      .search-container {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-
-      .search-container input[type="text"] {
-        padding: 8px;
-        margin-right: 10px;
-        width: 300px;
-      }
-
-      .search-container button {
-        padding: 8px 16px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-
-      #filterMenu {
-        display: none;
-        background-color: #f4f4f4;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        padding: 10px;
-        margin-top: 10px;
-        width: 200px;
-        position: absolute;
-      }
-
-      #filterMenu label {
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+  <title>중고로사자 광장</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #fef1e6;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .table-container {
+      max-height: 700px;
+      overflow-y: auto;
+      background-color: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem;
+    }
+    table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #dee2e6;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      vertical-align: middle;
+      text-align: center;
+      font-size: 1rem;
+    }
+    th {
+      background-color: #f1f3f5;
+      font-weight: bold;
+    }
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+    .search-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 1.5rem 0;
+    }
+    .search-container input[type="text"] {
+      padding: 8px;
+      width: 300px;
+    }
+    .search-container button {
+      padding: 8px 16px;
+      border-radius: 4px;
+    }
+    #filterMenu {
+      display: none;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      position: absolute;
+      z-index: 1000;
+    }
+    #filterMenu label {
+      display: block;
+      padding: 6px 0;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1050;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+    }
+    .modal-content {
+      background-color: white;
+      margin: 10% auto;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      width: 90%;
+      max-width: 400px;
+    }
+    .sort-icon {
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-left: 6px;
+    }
+    @media screen and (max-width: 768px) {
+      .table-container table,
+      .table-container thead,
+      .table-container tbody,
+      .table-container th,
+      .table-container td,
+      .table-container tr {
         display: block;
-        padding: 8px;
-        cursor: pointer;
-        font-weight: bold;
-      }
-
-      #filterMenu label:hover {
-        background-color: #007bff;
-        color: white;
-      }
-
-      #searchInput {
-        width: 300px;
-        padding: 8px;
-      }
-      .sort-icon {
-        cursor: pointer;
-        transition: transform 0.3s ease;
-      }
-
-      .sort-icon:hover {
-        transform: scale(3);
-        color: #007bff;
-      }
-
-      .sort-icon:hover {
-        cursor: pointer;
-      }
-      .modal {
-        position: fixed;
-        z-index: 9999;
-        left: 0;
-        top: 0;
         width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
       }
 
-      .modal-content {
+      .table-container thead {
+        display: none;
+      }
+
+      .table-container tr {
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1rem;
         background-color: #fff;
-        margin: 15% auto;
-        padding: 20px;
-        width: 300px;
-        border-radius: 5px;
-        text-align: center;
       }
 
-      .close {
-        float: right;
-        font-size: 20px;
+      .table-container td {
+        padding: 8px 12px;
+        font-size: 1rem;
+        border: none;
+        border-bottom: 1px solid #eee;
+      }
+
+      .table-container td:last-child {
+        border-bottom: none;
+      }
+
+      .table-container td::before {
+        content: attr(data-label);
         font-weight: bold;
-        cursor: pointer;
-      }
-      .report-warning {
-        background-color: #ffe58f;
-      }
-      .report-danger {
-        background-color: #ff9ca5;
-      }
-      .report-critical {
-        background-color: #972833;
-      }
-      .report-none {
-        background-color: #b6f6c5;
-      }
-    </style>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        document
-          .getElementById("filterToggle")
-          .addEventListener("click", function () {
-            const filterMenu = document.getElementById("filterMenu");
-            filterMenu.style.display =
-              filterMenu.style.display === "none" ? "block" : "none";
-          });
-
-        const filterInputs = document.querySelectorAll('input[name="filter"]');
-        filterInputs.forEach((input) => {
-          input.addEventListener("change", function () {
-            const filterMenu = document.getElementById("filterMenu");
-            filterMenu.style.display = "none";
-          });
-        });
-        document.addEventListener("click", function (event) {
-          const filterMenu = document.getElementById("filterMenu");
-          const filterToggle = document.getElementById("filterToggle");
-
-          // 필터 메뉴나 토글 버튼 외부를 클릭하면 필터 메뉴 닫기
-          if (
-            !filterMenu.contains(event.target) &&
-            event.target !== filterToggle
-          ) {
-            filterMenu.style.display = "none";
-          }
-        });
-      });
-      function search() {
-        const searchInput = document.getElementById("searchInput").value;
-        const selectedFilter = document.querySelector(
-          'input[name="filter"]:checked'
-        );
-
-        const region = document.getElementById("hiddenRegion").value;
-
-        let queryParams = [];
-
-        if (selectedFilter && searchInput.trim() !== "") {
-          const filterValue = selectedFilter.value;
-          queryParams.push(
-            `${selectedFilter.value}=${encodeURIComponent(searchInput)}`
-          );
-          if (region) {
-            queryParams.push(`region=${encodeURIComponent(region)}`);
-          }
-          const queryString = queryParams.join("&");
-          window.location.href = `/post/search/detail?${queryString}`;
-        } else {
-          alert("검색어를 입력하세요");
-        }
-      }
-      function clearPage() {
-        document.getElementById("searchInput").value = "";
-        const filterInputs = document.querySelectorAll('input[name="filter"]');
-        filterInputs.forEach((input) => {
-          input.checked = false;
-        });
-        window.location.href = "/dashboard";
-      }
-      let sortDirections = [true, true, true, true];
-
-      function sortTable(columnIndex) {
-        const table = document.getElementById("postTable");
-        const tbody = table.tBodies[0];
-        const rows = Array.from(tbody.querySelectorAll("tr"));
-        const asc = sortDirections[columnIndex];
-
-        rows.sort((a, b) => {
-          const cellA = a.children[columnIndex].innerText.trim();
-          const cellB = b.children[columnIndex].innerText.trim();
-
-          if (!isNaN(cellA) && !isNaN(cellB)) {
-            return asc ? cellA - cellB : cellB - cellA;
-          }
-          return asc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
-        });
-
-        rows.forEach((row) => tbody.appendChild(row));
-
-        document.querySelectorAll(".sort-icon").forEach((el, i) => {
-          el.textContent = i === columnIndex ? (asc ? "▲" : "▼") : "↕";
-        });
-
-        sortDirections[columnIndex] = !asc;
-      }
-      document.addEventListener("DOMContentLoaded", function () {
-        document
-          .getElementById("regionButton")
-          .addEventListener("click", function () {
-            document.getElementById("regionModal").style.display = "block";
-          });
-      });
-
-      function closeModal() {
-        document.getElementById("regionModal").style.display = "none";
+        display: block;
+        color: #555;
+        margin-bottom: 4px;
       }
 
-      function applyRegion() {
-        const region = document.getElementById("regionInput").value.trim();
-        if (region) {
-          const searchInput = document.getElementById("searchInput").value;
-          const selectedFilter = document.querySelector(
-            'input[name="filter"]:checked'
-          );
-          const baseUrl = "/post/search/detail";
-
-          let query = "";
-          if (selectedFilter && searchInput) {
-            query += `${selectedFilter.value}=${encodeURIComponent(
-              searchInput
-            )}&`;
-          }
-          query += `region=${encodeURIComponent(region)}`;
-
-          window.location.href = `${baseUrl}?${query}`;
-        }
-        closeModal();
+      .table-container img {
+        max-width: 100%;
+        height: auto;
       }
-    </script>
-  </head>
+    }
+  </style>
+</head>
 
-  <body layout:fragment="content">
-    <div class="container my-4">
-      <div
-        th:if="${param.signupSuccess}"
-        class="alert alert-success text-center mt-3"
-      >
-        🎉 회원가입이 완료되었습니다! 중고사자에 오신 것을 환영합니다.
-      </div>
-
-      <h2 class="mb-4">📦 중고로사자 광장</h2>
-
-      <a th:href="@{/post/create}" class="btn btn-primary mb-3"
-        >➕ 게시글 작성</a
-      >
-
-      <div class="search-container">
-        <button class="btn btn-outline-secondary" id="regionButton">
-          📍 지역
-        </button>
-
-        <div id="regionModal" class="modal">
-          <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h5>지역 입력</h5>
-            <input
-              type="text"
-              class="form-control my-2"
-              id="regionInput"
-              placeholder="지역명을 입력하세요"
-            />
-            <button class="btn btn-primary w-100" onclick="applyRegion()">
-              적용
-            </button>
-          </div>
-        </div>
-
-        <input
-          type="hidden"
-          id="hiddenRegion"
-          th:value="${region != null ? region : ''}"
-        />
-
-        <button class="btn btn-outline-secondary" id="filterToggle">
-          🔍 조건
-        </button>
-        <button
-          class="btn btn-outline-secondary"
-          th:if="${region != null}"
-          th:text="|지역 = ${region}|"
-        >
-          >
-        </button>
-
-        <div id="filterMenu">
-          <label
-            ><input type="radio" name="filter" value="title" checked />
-            제목</label
-          >
-          <label
-            ><input type="radio" name="filter" value="username" /> 닉네임</label
-          >
-          <label
-            ><input type="radio" name="filter" value="content" /> 내용</label
-          >
-        </div>
-
-        <input
-          type="text"
-          class="form-control"
-          id="searchInput"
-          placeholder="검색어 입력"
-        />
-        <button class="btn btn-primary" onclick="search()">검색</button>
-        <button class="btn btn-outline-danger" onclick="clearPage()">
-          초기화
-        </button>
-      </div>
-
-      <div th:if="${filter}">
-        <p>
-          검색 조건:
-          <span th:text="|${filter} 이 ${condition}을 포함하는 결과|"></span>
-        </p>
-      </div>
-
-      <div class="table-container">
-        <table id="postTable">
-          <thead>
-            <tr>
-              <th onclick="sortTable(0)">
-                제목 <span class="sort-icon" id="icon-0">↕</span>
-              </th>
-              <th onclick="sortTable(1)">
-                작성자 <span class="sort-icon" id="icon-1">↕</span>
-              </th>
-              <th onclick="sortTable(2)">
-                조회수 <span class="sort-icon" id="icon-2">↕</span>
-              </th>
-              <th onclick="sortTable(3)">
-                작성일 <span class="sort-icon" id="icon-3">↕</span>
-              </th>
-              <th>지역 <span></span></th>
-              <th>썸네일 <span></span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <th:block th:each="post : ${posts}">
-              <tr
-                th:class="${post.reportCount >= 30 ? 'report-critical' :
-                post.reportCount >= 20 ? 'report-danger' :
-                post.reportCount >= 10 ? 'report-warning' : 
-                'report-none'}"
-              >
-                <td>
-                  <a
-                    th:href="@{/post/{postId}(postId=${post.post.postId})}"
-                    th:text="${post.post.title}"
-                    style="
-                      color: #2200ff;
-                      font-size: 1.5rem;
-                      font-weight: bold;
-                      text-decoration: none;
-                    "
-                    >게시글 제목</a
-                  >
-                </td>
-                <td>
-                  <a
-                    th:href="@{/user/{userId}(userId=${post.post.userId})}"
-                    th:text="${post.post.username}"
-                    style="
-                      color: #2200ff;
-                      font-size: 1.5rem;
-                      text-decoration: none;
-                      font-weight: bold;
-                    "
-                    >작성자</a
-                  >
-                </td>
-
-                <td th:text="${post.post.view}">조회수</td>
-                <td
-                  th:text="${#temporals.format(post.post.created_at, 'yyyy-MM-dd HH:mm')}"
-                >
-                  작성일
-                </td>
-                <td th:text="${post.post.region}">지역</td>
-
-                <td>
-                  <img
-                    th:if="${post.img != null}"
-                    th:src="'data:image/jpeg;base64,' + ${post.img}"
-                    alt="게시글 이미지"
-                  />
-                </td>
-              </tr>
-            </th:block>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </body>
+<body layout:fragment="content">
+<div class="container my-4">
+  <h2 class="mb-4">📦 중고로사자 광장</h2>
+  <a th:href="@{/post/create}" class="btn btn-primary mb-3">➕ 게시글 작성</a>
+  <div class="search-container">
+    <button class="btn btn-outline-secondary" id="regionButton">📍 지역</button>
+    <input type="hidden" id="hiddenRegion" th:value="${region != null ? region : ''}" />
+    <button class="btn btn-outline-secondary" id="filterToggle">🔍 조건</button>
+    <input type="text" class="form-control" id="searchInput" placeholder="검색어 입력" />
+    <button class="btn btn-primary" onclick="search()">검색</button>
+    <button class="btn btn-outline-danger" onclick="clearPage()">초기화</button>
+  </div>
+  <div id="filterMenu">
+    <label><input type="radio" name="filter" value="title" checked /> 제목</label>
+    <label><input type="radio" name="filter" value="username" /> 닉네임</label>
+    <label><input type="radio" name="filter" value="content" /> 내용</label>
+  </div>
+  <div class="table-container">
+    <table id="postTable">
+      <thead>
+      <tr>
+        <th onclick="sortTable(0)">제목 <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable(1)">작성자 <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable(2)">조회수 <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable(3)">작성일 <span class="sort-icon">↕</span></th>
+        <th>지역</th>
+        <th>썸네일</th>
+      </tr>
+      </thead>
+      <tbody>
+      <th:block th:each="post : ${posts}">
+        <tr>
+          <td data-label="제목">
+            <a th:href="@{/post/{postId}(postId=${post.post.postId})}" th:text="${post.post.title}" class="text-decoration-none text-primary fw-semibold">제목</a>
+          </td>
+          <td data-label="작성자">
+            <a th:href="@{/user/{userId}(userId=${post.post.userId})}" th:text="${post.post.username}" class="text-decoration-none text-dark">작성자</a>
+          </td>
+          <td data-label="조회수" th:text="${post.post.view}">조회수</td>
+          <td data-label="작성일" th:text="${#temporals.format(post.post.created_at, 'yyyy-MM-dd HH:mm')}">작성일</td>
+          <td data-label="지역" th:text="${post.post.region}">지역</td>
+          <td data-label="썸네일">
+            <img th:if="${post.img != null}" th:src="'data:image/jpeg;base64,' + ${post.img}" alt="이미지" style="max-width: 60px; max-height: 60px" />
+          </td>
+        </tr>
+      </th:block>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
 </html>
