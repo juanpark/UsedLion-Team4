@@ -69,20 +69,17 @@
       display: inline-block;
       margin-top: 2rem;
     }
+
+    @media (max-width: 768px) {
+      .glass-card {
+        margin-left: 1rem;
+        margin-right: 1rem;
+        width: auto;
+      }
+    }
   </style>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const contentElement = document.getElementById("postContent");
-      let content = contentElement.innerText;
-      let formattedContent = "";
-      const lineLength = 50;
-      for (let i = 0; i < content.length; i += lineLength) {
-        formattedContent += content.substring(i, i + lineLength) + "<br>";
-      }
-      contentElement.innerHTML = formattedContent;
-    });
-
     function openReportModal(id) {
       document.getElementById("reportModal-" + id).style.display = "block";
       document.getElementById("modalBackdrop").style.display = "block";
@@ -245,9 +242,7 @@
       <h5 class="mb-3">💬 댓글</h5>
       <ul>
         <th:block th:each="node : ${replyTree}">
-          <div
-                  th:replace="~{replyNode :: reply(${node}, 0, ${post.postId},${post.userId})}"
-          ></div>
+          <div th:replace="~{replyNode :: reply(${node}, 0, ${post.postId},${post.userId})}" th:if="0 < 3"></div>
         </th:block>
       </ul>
 
