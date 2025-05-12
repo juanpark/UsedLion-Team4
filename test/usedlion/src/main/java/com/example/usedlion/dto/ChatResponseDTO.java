@@ -15,11 +15,12 @@ public class ChatResponseDTO {
     private String userName;
     private LocalDateTime createdAt ;
 
-    public ChatResponseDTO(Chat chat /*User user*/) {
+    public ChatResponseDTO(Chat chat /*User user*/, String nickname) {
         this.id = chat.getMsgId();
         this.userId = chat.getUserId();
         this.content = chat.getContent();
 //        this.userName = User.getUserNickName();
+        this.userName = nickname;
         this.createdAt = chat.getCreatedAt();
     }
 

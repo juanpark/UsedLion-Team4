@@ -71,4 +71,17 @@ public class UserInformationRepository {
                 user.isProfileComplete(),
                 user.getEmail());
     }
+
+    // ID -> Nickname 변환
+    public String findNicknameById(Long id) {
+        String sql = "SELECT nickname FROM user_information WHERE id = ?";
+        return jdbc.query(sql, ps -> ps.setLong(1, id), rs -> {
+            if (rs.next()) {
+                return rs.getString("nickname");
+            }
+            return null;
+        });
+    }
+
 }
+

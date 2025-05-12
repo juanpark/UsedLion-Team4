@@ -399,8 +399,8 @@
 </div>
 
 <script th:inline="javascript">
-    const userA = document.getElementById('userA').value;
-    const userB = document.getElementById('userB').value;
+    const userA = Number(document.getElementById('userA').value);
+    const userB =Number(document.getElementById('userB').value);
 
 
     let ws = null;
@@ -547,7 +547,8 @@
         <div class="message-header">
         ${!isMine ? `
         <img class="profile-img" src="/default-profile.png" alt="프로필" />
-        <h4>${message.userId}</h4>
+        // 닉네임 매핑
+        <h4>${message.userName}</h4>
         ` : ``
         }
 

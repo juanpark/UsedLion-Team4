@@ -3,6 +3,7 @@ package com.example.usedlion.service;
 import com.example.usedlion.dto.ChatResponseDTO;
 import com.example.usedlion.entity.Chat;
 import com.example.usedlion.repository.ChatRepository;
+import com.example.usedlion.repository.UserInformationRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -34,6 +35,9 @@ public class ChatServiceImpl extends TextWebSocketHandler implements ChatService
     
     // 세션 ID와 roomId 매핑
     private final Map<String, String> sessionRoomIdMap = new ConcurrentHashMap<>();
+
+    // ID -> nickname 매핑 (G1)
+    private final UserInformationRepository userInformationRepository;
 
     private final ChatRepository chatRepository;
     private final ObjectMapper objectMapper;
@@ -510,11 +514,22 @@ public class ChatServiceImpl extends TextWebSocketHandler implements ChatService
     public Page<ChatResponseDTO> getChatPage(Integer postId, int page, Integer size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         Page<Chat> chats = chatRepository.findByPostIdOrderByIdDesc(postId, pageRequest);
-        return chats.map(ChatResponseDTO::new);
+
+        return chats.map(chat -> {
+            String nickname = userInformationRepository.findNicknameById((long) chat.getUserId());
+            return new ChatResponseDTO(chat, nickname);
+        });
     }
+
+
     public Page<ChatResponseDTO> getPrivateChatPage(String roomId, int page, Integer size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
-        Page<Chat> chats = chatRepository.findByRoomIdOrderByIdDesc(roomId,pageRequest);
-        return chats.map(ChatResponseDTO::new);
+        Page<Chat> chats = chatRepository.findByRoomIdOrderByIdDesc(roomId, pageRequest);
+
+        return chats.map(chat -> {
+            String nickname = userInformationRepository.findNicknameById((long) chat.getUserId());
+            return new ChatResponseDTO(chat, nickname);
+        });
     }
+
 }
