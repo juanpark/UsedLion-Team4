@@ -12,6 +12,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Component
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -27,40 +28,35 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
-        System.out.println("✅ Entered CustomOAuth2SuccessHandler");
-
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
         OAuth2User oauthUser = oauthToken.getPrincipal();
 
-        System.out.println("🟡 OAuth2User attributes: " + oauthUser.getAttributes());
-
         String email = oauthUser.getAttribute("email");
-
-        System.out.println("🔍 Checking for existing user in DB by email: " + email);
 
         UserInformation user = userRepo.findByEmail(email);
 
-        System.out.println("📄 Loaded user: " + (user != null ? user.getEmail() : "null"));
-
         if (user == null) {
-            // Create new user from Google login
             user = new UserInformation();
             user.setEmail(email);
-            user.setUsername(oauthUser.getAttribute("name")); // optional
-            user.setNickname(null); // nickname should be null to ensure user completes it manually
+            user.setUsername(oauthUser.getAttribute("name")); // or derive from email
+            user.setNickname(null);
             user.setProvider("google");
             user.setProviderId(oauthUser.getAttribute("sub"));
             user.setRole("USER");
-            user.setCreatedAt(java.time.LocalDateTime.now());
+            user.setCreatedAt(LocalDateTime.now());
             user.setProfileComplete(false);
-            System.out.println("🆕 Creating and saving NEW Google user with nickname = null and email = " + email);
             userRepo.save(user);
         }
+
+        request.getSession().setAttribute("user", user);
 
         if (!user.isProfileComplete()) {
             request.getSession().setAttribute("pendingUser", user);
             response.sendRedirect("/complete-profile");
         } else {
+            // ✅ Ensure session contains user info just like local login
+            request.getSession().setAttribute("user", user);
+
             boolean isNew = request.getSession().getAttribute("newGoogleSignup") != null;
             if (isNew) {
                 request.getSession().removeAttribute("newGoogleSignup");
