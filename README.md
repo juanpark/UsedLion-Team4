@@ -1,13 +1,205 @@
 
-# 📚 UsedLion-Team4
-
-# UsedLion-Team4 | 온라인 중고 거래 플랫폼 | 멋사 백엔드 자바 15기 회고팀4 협업 공간
+# UsedLion-Team4 | 온라인 중고 거래 플랫폼 | 멋사 백엔드 자바 15기 회고팀4 
 
 ---
 
-# 🚀 팀원들을 위한 Git 사용 가이드
+**기능 요약**
 
-**문서 작성자: 박정환**
+중고로사자 (UsedLion)는 온라인 중고 거래 플랫폼으로, 다음과 같은 핵심 기능을 제공합니다:
+
+- **회원가입 및 로그인**
+  - 로컬 회원가입 및 로그인
+  - Google OAuth2 로그인 지원
+
+- **상품 등록 및 관리**
+  - 이미지 첨부 포함 상품 등록
+  - 상품 수정 및 삭제
+  - 판매 상태 (판매중 / 예약중 / 판매완료) 관리
+
+- **게시글 목록 및 상세보기**
+  - 카드형 UI 게시글 리스트 (PC 및 모바일 반응형)
+  - 신고 횟수에 따른 배경 색상 차등 적용
+  - 댓글 및 좋아요 기능
+  - 게시글 조회수 카운트
+
+- **채팅 기능**
+  - 채팅 라운지 (전체 사용자 공개 채팅)
+  - 상품 게시판 기반 1:1 개인 채팅
+
+- **검색 기능**
+  - 지역별 필터링
+  - 조건별 검색 및 초기화 버튼
+
+- **프로필 페이지**
+  - 유저 상세 내용 조회 및 수정    
+  - 유저가 작성한 게시글, 댓글, 좋아요 내역 확인
+  - 신고 횟수 및 신고 사유 모달 확인
+	
+⸻
+
+**라이브 사이트**
+```
+https://usedlion.online
+```
+
+**소스파일 빌드 및 실행 방법**
+
+1. 프로젝트 클론 또는 zip 파일 압축 풀기
+```
+git clone https://github.com/juanpark/UsedLion-Team4.git
+cd test/usedlion/
+```
+
+2. 백엔드 서버 실행
+	1.	application.properties 설정 확인 (DB 정보, OAuth2 등)
+	2.	빌드 및 실행
+```
+./gradlew build
+./gradlew bootRun
+```
+
+⸻
+
+# 프로젝트 기술 스택
+
+**Backend:** Java 21, Spring Boot 3.4.4, Spring Security, Spring Data JPA, MySQL 8
+
+**Frontend:** HTML, CSS (Bootstrap 5), JavaScript, Thymeleaf + Layout Dialect
+
+**Build Tool:** Gradle
+
+**OAuth2:** Google Login
+
+**API:** Daum Postcode API
+
+**인프라:** Mac Mini 서버, NGINX + SSL (Let’s Encrypt), Reverse Proxy 구성
+→ 접속 주소: https://usedlion.online
+
+⸻  
+
+# 로컬 개발 환경 세팅
+
+**필수 설치 도구**
+- Java 21 (JDK)
+- MySQL 8
+- Gradle (IntelliJ에서 자동 관리됨)
+- IntelliJ IDEA (Ultimate or Community)
+- Git
+
+**프로젝트 클론**
+```
+git clone https://github.com/juanpark/UsedLion-Team4.git
+cd usedlion
+```
+⚠️ 기본 개발 브랜치는 main이 아닌 development/juan입니다.작업은 반드시 새 브랜치를 생성하여 진행하세요:
+
+```
+git fetch origin
+git checkout -b development-juan-feature origin/development/juan
+```
+***더 자세한 깃허브 협업 내용은 아래에 깃허브 가이드를 참고하세요**
+
+⸻  
+
+
+# MySQL 설정
+- 데이터베이스 설정 파일은 별도로 정리된 파일을 참고하세요  
+- 사용자명/비밀번호: 팀에서 공유된 chatadmin 계정 사용  
+
+- application.properties 또는 application-local.properties에 입력:  
+```
+spring.datasource.username=chatadmin
+spring.datasource.password=... (공유된 비밀번호)
+```
+⸻  
+**MySQL DB 접근 안내**
+**멋사 회고 4팀 원격 MySQL 접속 가이드 - SSH Tunnel 방식 (Windows + WSL)**
+
+각자 로컬 환경에서 맥미니 서버의 MySQL DB에 안전하게 접속할 수 있도록 SSH 터널 방식을 설정하였습니다.  
+외부에서도 마치 같은 네트워크에 있는 것처럼 접속 가능하며, 보안도 유지됩니다.  
+
+📌 접속 정보  
+- SSH 접속 대상 IP: 개별 메일로 안내  
+- SSH 포트: 3307  
+- SSH 사용자명: dbtunnel  
+- SSH Key 파일: dbtunnel_id_rsa (개별 메일로 발송)  
+- MySQL 호스트 이름: 127.0.0.1  
+- MySQL 포트: 3306  
+- MySQL 사용자명: chatadmin  
+- MySQL 비밀번호: 개별 메일로 안내  
+
+*필요 시 Putty 또는 직접 MySQL Workbench 클라이언트 세팅에서 TCP/IP over SSH를 활용할 수도 있지만, 현재는 WSL 기반 터널이 가장 간편하고 확실합니다.  
+
+**SSH 클라이언트 설치**
+- Mac / Linux 사용자는 기본 제공됩니다.  
+- Windows 사용자는 PuTTY 대신 WSL(Windows Subsystem for Linux)이나 OpenSSH 사용을 권장합니다.  
+
+**Windows 환경 접속 방법**  
+WSL을 통한 SSH 터널 연결 (권장)  
+
+1. WSL 설치   
+- PowerShell에서 다음 명령 실행 (설치 후 재부팅 필요)  
+```
+wsl --install
+```
+- wsl 입력해 리눅스 터미널 실행  
+
+2. SSH 키 준비  
+
+```
+// 리눅스 환경에서 ssh 키 보관할 폴더 생성 및 그 폴더로 이동
+mkdir -p ~/.ssh
+cd ~/.ssh
+
+// 키를 다운로드 받은 윈도우 경로에서 리눅스 키 보관 폴더로 복사하기
+cp /mnt/c/다운로드경로/dbtunnel_id_rsa ~/.ssh/
+
+// 리눅스 환경에서 키 권한 설정하기 
+chmod 600 ~/.ssh/dbtunnel_id_rsa
+```
+- WSL과 윈도우 경로가 다르기에 리눅스 /mnt/c/... 경로에 윈도우 c: 경로가 마운트되어 있는 부분을 활용해서 파일을 옮기자
+
+3. SSH 터널 연결
+```
+ssh -i ~/.ssh/dbtunnel_id_rsa -N -T -L 3307:127.0.0.1:3306 dbtunnel@[맥미니IP]
+```
+- 처음 접속 시 “yes” 입력 필요할 수 있음
+- 창이 멈춘 것처럼 보여도 정상 연결 상태입니다
+- 이 창을 닫지 말고 유지해 주세요 (터널로 연결 되어 있는 상태입니다)
+
+---
+
+**로컬 MySQL Workbench 설정**
+
+1. MySQL Connections > 새로운 연결 생성  
+2. 설정:  
+    - Connection Method: Standard TCP/IP
+    - Hostname: 127.0.0.1
+    - Port: 3307
+    - Username: chatadmin
+    - Password: 메일로 받은 비밀번호
+
+3. SSH 탭은 비워두세요
+   (WSL에서 이미 터널이 연결된 상태이므로 불필요)
+
+---
+
+💡 터미널에서 접속하고 싶다면
+
+```
+mysql -h 127.0.0.1 -P 3307 -u chatadmin -p
+```
+
+```
+// DB 접속 시 쿼리 example:
+USE CHATDB;
+SHOW TABLES;
+SELECT * FROM CHAT_MESSAGES;
+```
+
+
+
+# 팀원들을 위한 Git 사용 가이드
 
 UsedLion-Team4 프로젝트 협업을 위해 Git 및 GitHub를 효과적으로 사용하는 방법을 안내합니다.  
 브랜치를 활용하여 안정적인 코드 관리와 원활한 협업이 가능하도록 구성했습니다.
